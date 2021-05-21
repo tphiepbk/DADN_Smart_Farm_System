@@ -10,7 +10,25 @@ var messageOff = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 0 , "unit"
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
+var feedsArray = [];
+var feedsArrayCreatedAt = [];
+
 var client;
+var table = document.getElementById("recent-feeds-table");
+
+document.addEventListener('DOMContentLoaded', function () {
+    var checkbox = document.querySelector('input[type="checkbox"]');
+
+    checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {
+            turnOn();
+            console.log('Turn on');
+        } else {
+            turnOff();
+            console.log('Turn off');
+        }
+    });
+});
 
 // send a message
 function turnOn () {
@@ -22,6 +40,10 @@ function turnOff () {
 }
 
 function getData() {
+
+    feedsArray = [];
+    feedsArrayCreatedAt = [];
+
     var req = new XMLHttpRequest();
     req.responseType = 'json';
     req.open('GET', dataUrl, true);
@@ -39,13 +61,14 @@ function getData() {
         else {
             checkbox.checked = false;
         }
+
+        for (var i = 0 ; i < 10 ; i++) {
+            feedsArray.push(JSON.parse(jsonResponse[i].value));
+            feedsArrayCreatedAt.push(jsonResponse[i].created_at);
+        }
     };
     req.send();
 }
-
-var intervalId = window.setInterval(function(){
-    getData();
-}, 1000);
 
 function init() {
     console.log("Connecting...");
@@ -79,4 +102,43 @@ function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
 }
 
+function clearTable() {
+    while (table.rows.length != 1) {
+        table.deleteRow(1);
+    }
+}
+
+function refreshTable() {
+    var cols = ['id', 'name', 'data', 'unit'];
+
+    clearTable();
+    
+    // Adding the data to the table
+    for (var i = 0; i < feedsArray.length; i++) {
+        var newRow = table.insertRow(-1);
+        for (var j = 0; j < 6 ; j++) {
+            if (j === 0) {
+                var newCell = newRow.insertCell(-1);
+                var newText = document.createTextNode(i+1);
+                newCell.appendChild(newText);
+            }
+            else if (j === 5) {
+                var newCell = newRow.insertCell(-1);
+                var newText = document.createTextNode(feedsArrayCreatedAt[i]);
+                newCell.appendChild(newText);
+            }
+            else {
+                var newCell = newRow.insertCell(-1);
+                var newText = document.createTextNode(feedsArray[i][cols[j-1]]);
+                newCell.appendChild(newText);
+            }
+        }
+    }
+}	
+
 init();
+refreshTable();
+
+var intervalId = window.setInterval(function(){
+    getData();
+}, 1000);
