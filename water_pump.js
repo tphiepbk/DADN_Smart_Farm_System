@@ -12,6 +12,20 @@ var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-r
 
 var client;
 
+document.addEventListener('DOMContentLoaded', function () {
+    var checkbox = document.querySelector('input[type="checkbox"]');
+
+    checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {
+            turnOn();
+            console.log('Turn on');
+        } else {
+            turnOff();
+            console.log('Turn off');
+        }
+    });
+});
+
 // send a message
 function turnOn () {
     client.send(topic, messageOn);
@@ -29,13 +43,23 @@ function getData() {
         var jsonResponse = req.response;
         console.log(jsonResponse.length);
         console.log(JSON.parse(jsonResponse[0].value).data);
+
+        var checkbox = document.querySelector('input[type="checkbox"]');
+
+        var toggle = JSON.parse(jsonResponse[0].value).data;
+        if (toggle == 1) {
+            checkbox.checked = true;
+        }
+        else {
+            checkbox.checked = false;
+        }
     };
     req.send();
 }
 
 var intervalId = window.setInterval(function(){
     getData();
-}, 5000);
+}, 1000);
 
 function init() {
     console.log("Connecting...");
