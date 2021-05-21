@@ -14,18 +14,10 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
-        <script>
-            var topicWaterPump = "tphiepbk/feeds/dadn-water-pump";
-            //var topicLight = "NPNLab_BBC/feeds/bk-iot-light";
-            //var topicMoisture = "NPNLab_BBC/feeds/bk-iot-soil";
-            var messageOn = "1";
-            var messageOff = "0";
-        </script>
-
         <title>Smart Farm System</title>
     </head>
 
-    <body class="c-app">
+    <body class="c-app" onload="init()">
 
         <div class="c-sidebar c-sidebar-dark c-sidebar-show">
 
@@ -99,8 +91,8 @@
                             <div class="card-body">
 
                                 <p class="card-text">Turn on/off the water pump system</p>
-                                <button type="button" onclick="publish(topicWaterPump, messageOn)" class="btn btn-success"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
-                                <button type="button" onclick="publish(topicWaterPump, messageOff)" class="btn btn-danger"><span class="cil-power-standby btn-icon mr-2"></span> Turn off</button>
+                                <button type="button" onclick="turnOn()" class="btn btn-success"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
+                                <button type="button" onclick="turnOff()" class="btn btn-danger"><span class="cil-power-standby btn-icon mr-2"></span> Turn off</button>
                             </div>
                         </div>
 
@@ -117,6 +109,6 @@
         <!-- Popper.js first, then CoreUI JS -->
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <script src="https://unpkg.com/@coreui/coreui/dist/js/coreui.min.js"></script>
-        <script src="feed.js"></script>
+        <script src="water_pump.js"></script>
     </body>
 </html>

@@ -1,31 +1,49 @@
-// client, user and device details
-
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
 var password    = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
 
-//var client = new Paho.MQTT.Client(host, Number(port), clientId);
+var topic = "tphiepbk/feeds/bk-iot-light-relay";
+
+var messageOn = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 1 , "unit" : ""});
+var messageOff = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 0 , "unit" : ""});
+
+var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
 var client;
 
 // send a message
-function publish (topic, message) {
-    /*
-    message = new Paho.MQTT.Message(message);
-    message.destinationName = topic;
-    message.qos = 2;
-    */
-    client.send(topic, message);
+function turnOn () {
+    client.send(topic, messageOn);
 }
+
+function turnOff () {
+    client.send(topic, messageOff);
+}
+
+function getData() {
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
+    req.open('GET', dataUrl, true);
+    req.onload  = function() {
+        var jsonResponse = req.response;
+        console.log(jsonResponse.length);
+        console.log(JSON.parse(jsonResponse[0].value).data);
+    };
+    req.send();
+}
+
+var intervalId = window.setInterval(function(){
+    getData();
+}, 5000);
 
 function init() {
     console.log("Connecting...");
     client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-    // set callback handlers
+
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
-    // connect the client
+
     client.connect({ 
         password : password,
         userName: username,
@@ -35,8 +53,8 @@ function init() {
 
 // called when the client connects
 function onConnect() {
+    client.subscribe(topic);
     console.log("Connect successfully");
-    client.subscribe("tphiepbk/feeds/bk-iot-relay");
 }
 
 // called when the client loses its connection
