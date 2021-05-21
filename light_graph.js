@@ -2,7 +2,7 @@ var labeldataLight = [];
 
 var chartdataLight = [];
 
-var lightChart;
+var light_chart;
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
@@ -36,7 +36,7 @@ function getData() {
 function createChart() {
     var ctxLight = document.getElementById("light_chart").getContext("2d");
 
-    lightChart = new Chart(ctxLight, {
+    light_chart = new Chart(ctxLight, {
         type: 'line',
         data: {
         labels: labeldataLight,
@@ -50,7 +50,7 @@ function createChart() {
 }
 
 function updateChart() {
-    lightChart.update();
+    light_chart.update();
 }
 
 getData();

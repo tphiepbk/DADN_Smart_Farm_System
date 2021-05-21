@@ -1,5 +1,3 @@
-// client, user and device details
-
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
@@ -10,26 +8,34 @@ var topic = "tphiepbk/feeds/bk-iot-water-pump-relay";
 var messageOn = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 1 , "unit" : ""});
 var messageOff = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 0 , "unit" : ""});
 
+var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+
 var client;
 
 // send a message
 function turnOn () {
-    /*
-    message = new Paho.MQTT.Message(message);
-    message.destinationName = topic;
-    message.qos = 2;
-    */
     client.send(topic, messageOn);
 }
 
 function turnOff () {
-    /*
-    message = new Paho.MQTT.Message(message);
-    message.destinationName = topic;
-    message.qos = 2;
-    */
     client.send(topic, messageOff);
 }
+
+function getData() {
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
+    req.open('GET', dataUrl, true);
+    req.onload  = function() {
+        var jsonResponse = req.response;
+        console.log(jsonResponse.length);
+        console.log(JSON.parse(jsonResponse[0].value).data);
+    };
+    req.send();
+}
+
+var intervalId = window.setInterval(function(){
+    getData();
+}, 5000);
 
 function init() {
     console.log("Connecting...");

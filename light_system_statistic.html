@@ -39,14 +39,14 @@
                 <li class="c-sidebar-nav-title">Statistic</li>
 
                 <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="electricity.html">
-                    <i class="c-sidebar-nav-icon cil-bolt"></i> Electricity
+                    <a class="c-sidebar-nav-link" href="light_system_statistic.html">
+                    <i class="c-sidebar-nav-icon cil-bolt"></i> Light System
                     </a>
                 </li>
 
                 <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="water.html">
-                    <i class="c-sidebar-nav-icon cil-drop"></i> Water
+                    <a class="c-sidebar-nav-link" href="water_pump_system_statistic.html">
+                    <i class="c-sidebar-nav-icon cil-drop"></i> Water Pump System
                     </a>
                 </li>
 
@@ -81,7 +81,7 @@
                         <li class="breadcrumb-item">
                         <!-- if breadcrumb is single--><span>Statistic</span>
                         </li>
-                        <li class="breadcrumb-item active"><span>Water</span></li>
+                        <li class="breadcrumb-item active"><span>Light System</span></li>
                     </ol>
                     </nav>
                 </div>
@@ -94,10 +94,12 @@
                         <div class="card">
                             <div class="card-body">
 
-                                <canvas id="water_pump_chart"></canvas>
+                                <canvas id="light_chart"></canvas>
 
-                                <p class="card-text">Representing the state of water pump</p>
-                                <button type="button" onclick="loadWaterPumpChart()" class="btn btn-primary"><span class="cil-chart btn-icon mr-2"></span> Load chart</button>
+                                <p class="card-text">Representing the state of light system</p>
+                                <!--
+                                <button type="button" onclick="loadLightChart()" class="btn btn-primary"><span class="cil-chart btn-icon mr-2"></span> Load chart</button>
+                                -->
                             </div>
                         </div>
 
@@ -114,6 +116,6 @@
         <!-- Popper.js first, then CoreUI JS -->
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <script src="https://unpkg.com/@coreui/coreui/dist/js/coreui.min.js"></script>
-        <script src="water_pump_graph.js"></script>
+        <script src="light_graph.js"></script>
     </body>
 </html>
