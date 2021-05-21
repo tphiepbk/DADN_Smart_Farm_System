@@ -13,6 +13,8 @@ var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/
 var feedsArray = [];
 var feedsArrayCreatedAt = [];
 
+var intervalId;
+
 var client;
 var table = document.getElementById("recent-feeds-table");
 
@@ -32,11 +34,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // send a message
 function turnOn () {
+    stopGettingData();
     client.send(topic, messageOn);
+    startGettingData();
 }
 
 function turnOff () {
+    stopGettingData();
     client.send(topic, messageOff);
+    startGettingData();
 }
 
 function getData() {
@@ -108,7 +114,20 @@ function clearTable() {
     }
 }
 
+function startGettingData() {
+    intervalId = window.setInterval(function(){
+        getData();
+    }, 1000);
+}
+
+function stopGettingData() {
+    clearInterval(intervalId);
+}
+
 function refreshTable() {
+
+    stopGettingData();
+
     var cols = ['id', 'name', 'data', 'unit'];
 
     clearTable();
@@ -134,11 +153,9 @@ function refreshTable() {
             }
         }
     }
+
+    startGettingData();
 }	
 
 init();
-refreshTable();
-
-var intervalId = window.setInterval(function(){
-    getData();
-}, 1000);
+startGettingData();
