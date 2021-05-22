@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@coreui/icons": "^2.0.1"
+    "@coreui/icons": "^2.0.1",
+    "mqtt": "^4.2.6"
   }
 }
