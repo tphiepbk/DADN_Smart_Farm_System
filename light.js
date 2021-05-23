@@ -1,12 +1,12 @@
-var port        = 443;
-var host        = "io.adafruit.com";
-var username    = "tphiepbk";
-var password    = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
+var port = 443;
+var host = "io.adafruit.com";
+var username = "tphiepbk";
+var password = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
 
 var topic = "tphiepbk/feeds/bk-iot-light-relay";
 
-var messageOn = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 1 , "unit" : ""});
-var messageOff = JSON.stringify({"id" : 11, "name": "RELAY", "data" : 0 , "unit" : ""});
+var messageOn = JSON.stringify({ "id": 11, "name": "RELAY", "data": 1, "unit": "" });
+var messageOff = JSON.stringify({ "id": 11, "name": "RELAY", "data": 0, "unit": "" });
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
@@ -33,13 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // send a message
-function turnOn () {
+function turnOn() {
     stopGettingData();
     client.send(topic, messageOn);
     startGettingData();
 }
 
-function turnOff () {
+function turnOff() {
     stopGettingData();
     client.send(topic, messageOff);
     startGettingData();
@@ -53,7 +53,7 @@ function getData() {
     var req = new XMLHttpRequest();
     req.responseType = 'json';
     req.open('GET', dataUrl, true);
-    req.onload  = function() {
+    req.onload = function () {
         var jsonResponse = req.response;
         console.log(jsonResponse.length);
         console.log(JSON.parse(jsonResponse[0].value).data);
@@ -68,7 +68,7 @@ function getData() {
             checkbox.checked = false;
         }
 
-        for (var i = 0 ; i < 10 ; i++) {
+        for (var i = 0; i < 10; i++) {
             feedsArray.push(JSON.parse(jsonResponse[i].value));
             feedsArrayCreatedAt.push(jsonResponse[i].created_at);
         }
@@ -83,10 +83,10 @@ function init() {
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
-    client.connect({ 
-        password : password,
+    client.connect({
+        password: password,
         userName: username,
-        onSuccess: onConnect 
+        onSuccess: onConnect
     });
 }
 
@@ -115,7 +115,7 @@ function clearTable() {
 }
 
 function startGettingData() {
-    intervalId = window.setInterval(function(){
+    intervalId = window.setInterval(function () {
         getData();
     }, 1000);
 }
@@ -131,14 +131,14 @@ function refreshTable() {
     var cols = ['id', 'name', 'data', 'unit'];
 
     clearTable();
-    
+
     // Adding the data to the table
     for (var i = 0; i < feedsArray.length; i++) {
         var newRow = table.insertRow(-1);
-        for (var j = 0; j < 6 ; j++) {
+        for (var j = 0; j < 6; j++) {
             if (j === 0) {
                 var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(i+1);
+                var newText = document.createTextNode(i + 1);
                 newCell.appendChild(newText);
             }
             else if (j === 5) {
@@ -148,14 +148,14 @@ function refreshTable() {
             }
             else {
                 var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(feedsArray[i][cols[j-1]]);
+                var newText = document.createTextNode(feedsArray[i][cols[j - 1]]);
                 newCell.appendChild(newText);
             }
         }
     }
 
     startGettingData();
-}	
+}
 
 init();
 startGettingData();

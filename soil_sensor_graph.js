@@ -4,12 +4,15 @@ var chartdataSoil = [];
 
 var soil_chart;
 
-var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+var dataSoilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
-function getData() {
+function getSoilData() {
+
+    console.log('getting data...');
+
     var req = new XMLHttpRequest();
     req.responseType = 'json';
-    req.open('GET', dataUrl, true);
+    req.open('GET', dataSoilUrl, true);
     req.onload  = function() {
         var jsonResponse = req.response;
         for (var i = 0 ; i < jsonResponse.length ; i++) {
@@ -18,15 +21,17 @@ function getData() {
         }
     };
     req.send();
+
+    console.log(chartdataSoil);
 }
 
-function createChart() {
-    var ctxLight = document.getElementById("soil_chart").getContext("2d");
+function createSoilChart() {
+    var ctxSoil = document.getElementById("soil_chart").getContext("2d");
 
-    light_chart = new Chart(ctxLight, {
+    soil_chart = new Chart(ctxSoil, {
         type: 'line',
         data: {
-        labels: labeldataLight,
+        labels: labeldataSoil,
             datasets: [{
                 label: 'State',
                 data: chartdataSoil,
@@ -36,17 +41,18 @@ function createChart() {
     });
 }
 
-function updateChart() {
+function updateSoilChart() {
     soil_chart.update();
 }
 
-getData();
-createChart();
+getSoilData();
+createSoilChart();
 
 var intervalId = window.setInterval(function(){
+
     labeldataSoil = [];
     chartdataSoil = [];
 
-    getData();
-    updateChart();
+    getSoilData();
+    updateSoilChart();
 }, 1000);
