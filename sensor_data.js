@@ -142,7 +142,7 @@ function checkRelayAutomatically() {
     if (chartdataLight[0] < 100 && stateOfLightRelay[0] == 0) turnLightOn();
     else if (chartdataLight[0] >= 100 && stateOfLightRelay[0] == 1) turnLightOff();
 
-    if (chartdataSoil[0] < 100 && stateOfWaterPumpRelay[0] == 0) turnWaterPumpOff();
+    if (chartdataSoil[0] < 100 && stateOfWaterPumpRelay[0] == 0) turnWaterPumpOn();
     else if (chartdataSoil[0] >= 100 && stateOfWaterPumpRelay[0] == 1) turnWaterPumpOff();
 }
 
