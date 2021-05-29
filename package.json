@@ -1,13 +1,35 @@
 {
+  "name": "smart_farm_system",
+  "version": "0.0.1",
+  "description": "This is an Multidisciplinary Project",
+  "main": "index.js",
   "dependencies": {
     "@coreui/icons": "^2.0.1",
     "browserify": "^17.0.0",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "hbs": "^4.1.2",
+    "jquery": "^3.6.0",
     "mongodb": "^3.6.8",
+    "mongoose": "^5.12.12",
     "mqtt": "^4.2.6",
+    "path": "^0.12.7",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
-    "bundle": "browserify light.js -o bundle.js"
-  }
+    "bundle": "browserify light.js -o bundle.js",
+    "dev": "nodemon src/app.js -e js,hbs",
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tphiepbk/DADN_Smart_Farm_System.git"
+  },
+  "keywords": [],
+  "author": "tphiepbk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tphiepbk/DADN_Smart_Farm_System/issues"
+  },
+  "homepage": "https://github.com/tphiepbk/DADN_Smart_Farm_System#readme"
 }
