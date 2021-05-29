@@ -8,10 +8,12 @@ const port = process.env.PORT || 3000;
 const staticpath = path.join(__dirname, "../public");
 const templatepath = path.join(__dirname, "../views");
 const imagepath = path.join(__dirname, "../public/images");
+const scriptpath = path.join(__dirname, "../public/javascripts");
 
 // Middleware
 app.use(express.static(staticpath));
 app.use(express.static(imagepath));
+app.use(express.static(scriptpath));
 
 app.set("view engine", "ejs");
 app.set("views", templatepath);
