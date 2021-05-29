@@ -17,7 +17,7 @@ function getLightData() {
         var jsonResponse = req.response;
         for (var i = 0 ; i < jsonResponse.length ; i++) {
             labeldataLight.push(jsonResponse[i].created_at);
-            chartdataLight.push(JSON.parse(jsonResponse[i].value).data);
+            chartdataLight.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();

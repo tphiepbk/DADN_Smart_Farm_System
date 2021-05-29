@@ -21,8 +21,8 @@ var password = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
 var topicLightRelay = "tphiepbk/feeds/bk-iot-light-relay";
 var topicWaterPumpRelay = "tphiepbk/feeds/bk-iot-water-pump-relay";
 
-var messageOn = JSON.stringify({ "id": 11, "name": "RELAY", "data": 1, "unit": "" });
-var messageOff = JSON.stringify({ "id": 11, "name": "RELAY", "data": 0, "unit": "" });
+var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
+var messageOff = JSON.stringify({ "id": "11", "name": "RELAY", "data": "0", "unit": "" });
 
 var stateOfLightRelay = [];
 var stateOfWaterPumpRelay = [];
@@ -107,7 +107,7 @@ function getStateOfLightRelay() {
         stateOfLightRelay = [];
 
         for (var i = 0 ; i < jsonResponse.length ; i++) {
-            stateOfLightRelay.push(JSON.parse(jsonResponse[i].value).data);
+            stateOfLightRelay.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();
@@ -125,7 +125,7 @@ function getStateOfWaterPumpRelay() {
         stateOfWaterPumpRelay = [];
 
         for (var i = 0 ; i < jsonResponse.length ; i++) {
-            stateOfWaterPumpRelay.push(JSON.parse(jsonResponse[i].value).data);
+            stateOfWaterPumpRelay.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();
@@ -160,7 +160,7 @@ function getSoilData() {
 
         for (var i = 0 ; i < jsonResponse.length ; i++) {
             labeldataSoil.push(jsonResponse[i].created_at);
-            chartdataSoil.push(JSON.parse(jsonResponse[i].value).data);
+            chartdataSoil.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();
@@ -180,7 +180,7 @@ function getLightData() {
 
         for (var i = 0 ; i < jsonResponse.length ; i++) {
             labeldataLight.push(jsonResponse[i].created_at);
-            chartdataLight.push(JSON.parse(jsonResponse[i].value).data);
+            chartdataLight.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();

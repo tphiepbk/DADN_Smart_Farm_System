@@ -5,8 +5,8 @@ var password = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
 
 var topic = "tphiepbk/feeds/bk-iot-light-relay";
 
-var messageOn = JSON.stringify({ "id": 11, "name": "RELAY", "data": 1, "unit": "" });
-var messageOff = JSON.stringify({ "id": 11, "name": "RELAY", "data": 0, "unit": "" });
+var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
+var messageOff = JSON.stringify({ "id": "11", "name": "RELAY", "data": "0", "unit": "" });
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
@@ -60,7 +60,7 @@ function getData() {
 
         var checkbox = document.querySelector('input[type="checkbox"]');
 
-        var toggle = JSON.parse(jsonResponse[0].value).data;
+        var toggle = parseInt(JSON.parse(jsonResponse[0].value).data);
         if (toggle == 1) {
             checkbox.checked = true;
         }

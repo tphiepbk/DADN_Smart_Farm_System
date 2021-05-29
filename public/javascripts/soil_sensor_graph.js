@@ -17,7 +17,7 @@ function getSoilData() {
         var jsonResponse = req.response;
         for (var i = 0 ; i < jsonResponse.length ; i++) {
             labeldataSoil.push(jsonResponse[i].created_at);
-            chartdataSoil.push(JSON.parse(jsonResponse[i].value).data);
+            chartdataSoil.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();

@@ -26,7 +26,7 @@ function getData() {
         var jsonResponse = req.response;
         for (var i = 0 ; i < jsonResponse.length ; i++) {
             labeldataWaterPump.push(jsonResponse[i].created_at);
-            chartdataWaterPump.push(JSON.parse(jsonResponse[i].value).data);
+            chartdataWaterPump.push(parseInt(JSON.parse(jsonResponse[i].value).data));
         }
     };
     req.send();
