@@ -6,9 +6,12 @@ const MongoClient = require("mongodb").MongoClient;
 // Connection string
 const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot?retryWrites=true&w=majority";
 
-const dataUrl = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data";
+const soil_url = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data";
+const light_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data";
+const light_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data";
+const water_pump_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data";
 
-function upload(data) {
+function upload(collectionName, data) {
     MongoClient.connect(connectionString, function(err, client) {
 
         if (err) throw err;
@@ -16,37 +19,37 @@ function upload(data) {
 
         const db = client.db('bk-iot');
 
-        db.collection('bk-iot-soil').createIndex({"id":1}, {unique: true});
+        db.collection(collectionName).createIndex({"id":1}, {unique: true});
 
-        db.collection('bk-iot-soil').insert(data)
+        db.collection(collectionName).insert(data)
         .then(function(result) {
-            console.log(result);
+            //console.log(result);
         })
         .catch((err) => {
-            console.log(err.message);
+            //console.log(err.message);
         });
 
         client.close();
     });
 };
 
-
-function getData() {
-    fetch(dataUrl)
+function getData(collectionName,url) {
+    fetch(url)
     .then(data=>{return data.json()})
     .then(res=>{
         feedData = [];
-        console.log(res.length);
+        //console.log(res.length);
         for (var i = 0 ; i < res.length ; i++) {
-            //upload(JSON.parse(res[i].value), 'bk-iot-soil').catch(console.dir);
             feedData.push(res[i]);
         }
-        console.log(feedData);
-        upload(feedData);
+        //console.log(feedData);
+        upload(collectionName, feedData);
     })
 };
 
 setInterval(function(){
-    console.log('inserting to mongoDB...');
-    getData();
-}, 10000);
+    getData('bk-iot-light', light_url);
+    getData('bk-iot-soil', soil_url);
+    getData('bk-iot-light-relay', light_relay_url);
+    getData('bk-iot-water-pump-relay', water_pump_relay_url);
+}, 1000);
