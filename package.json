@@ -13,12 +13,13 @@
     "mongodb": "^3.6.8",
     "mongoose": "^5.12.12",
     "mqtt": "^4.2.6",
+    "node-fetch": "^2.6.1",
     "path": "^0.12.7",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
     "bundle": "browserify light.js -o bundle.js",
-    "dev": "nodemon src/app.js -e js,hbs",
+    "dev": "nodemon app.js -e js,hbs",
     "start": "node app"
   },
   "repository": {
