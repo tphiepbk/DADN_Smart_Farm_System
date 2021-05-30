@@ -1,7 +1,8 @@
 const express = require("express");
 const path = require("path");
 //require("./db/conn");
-require("./db/get_data");
+//require("./db/get_data");
+require("./db/get_data_test");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -50,3 +51,18 @@ app.get("/water_pump", (req, res) => {
 app.listen(port, () =>{
     console.log('Server is running at port ' + port);
 });
+
+// ! Prevent app crash
+process.on('uncaughtException', (error, origin) => {
+    console.log('----- Uncaught exception -----')
+    console.log(error)
+    console.log('----- Exception origin -----')
+    console.log(origin)
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('----- Unhandled Rejection at -----')
+    console.log(promise)
+    console.log('----- Reason -----')
+    console.log(reason)
+})
