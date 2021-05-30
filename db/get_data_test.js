@@ -19,6 +19,7 @@ function upload(collectionName, data) {
 
         const db = client.db('bk-iot-test');
 
+        // Use index to prevent duplicate
         db.collection(collectionName).createIndex({"id":1}, {unique: true});
 
         db.collection(collectionName).insert(data)
@@ -28,7 +29,6 @@ function upload(collectionName, data) {
         .catch((err) => {
             //console.log(err.message);
         });
-
         client.close();
     });
 };
