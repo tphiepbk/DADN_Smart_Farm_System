@@ -102,6 +102,9 @@ function getSoilData() {
 
     MongoClient.connect(connectionString, function(err, client) {
 
+        var temp1 = [];
+        var temp2 = [];
+
         assert.equal(null, err);
 
         const db = client.db("bk-iot-test");
@@ -112,17 +115,17 @@ function getSoilData() {
             assert.equal(null, err);
             console.log(doc.value);
 
-            labelSoilData.push(doc.created_at);
-            chartSoilData.push(JSON.parse(doc.value).data);
+            temp2.push(doc.created_at);
+            temp1.push(JSON.parse(doc.value).data);
 
         }, function() {
             client.close();
             /*
             console.log(chartSoilData);
             console.log(labelSoilData);
+            */
             chartSoilData = temp1;
             labelSoilData = temp2;
-            */
         });
     });
 
@@ -134,6 +137,9 @@ function getLightData() {
 
     MongoClient.connect(connectionString, function(err, client) {
 
+        var temp1 = [];
+        var temp2 = [];
+
         assert.equal(null, err);
 
         const db = client.db("bk-iot-test");
@@ -144,17 +150,17 @@ function getLightData() {
             assert.equal(null, err);
             console.log(doc.value);
 
-            labelLightData.push(doc.created_at);
-            chartLightData.push(JSON.parse(doc.value).data);
+            temp2.push(doc.created_at);
+            temp1.push(JSON.parse(doc.value).data);
 
         }, function() {
             client.close();
             /*
             console.log(chartSoilData);
             console.log(labelSoilData);
-            chartSoilData = temp1;
-            labelSoilData = temp2;
             */
+            chartLightData = temp1;
+            labelLightData = temp2;
         });
     });
 
@@ -172,7 +178,7 @@ io.on('connection', function(socket) {
 
         console.log('emitting');
         socket.emit('index', chartSoilData, labelSoilData, chartLightData, labelLightData);
-    }, 5000);
+    }, 1000);
 
 });
 
