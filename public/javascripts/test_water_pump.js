@@ -1,4 +1,6 @@
-const socket = io();
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
 
 var port = 443;
 var host = "io.adafruit.com";

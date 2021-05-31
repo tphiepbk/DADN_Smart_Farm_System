@@ -1,4 +1,6 @@
-const socket = io();
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
 
 var labeldataSoil = [];
 var chartdataSoil = [];
@@ -17,6 +19,7 @@ var topicWaterPumpRelay = "tphiepbk/feeds/bk-iot-water-pump-relay";
 var clientLight;
 var clientWaterPump;
 
+/*
 function init() {
     console.log("Connecting...");
 
@@ -67,6 +70,7 @@ function onMessageArrived(message) {
 }
 
 init();
+*/
 
 var ctxSoil = document.getElementById("soil_chart").getContext("2d");
 var soil_chart = new Chart(ctxSoil, {
