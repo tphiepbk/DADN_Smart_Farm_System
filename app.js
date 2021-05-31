@@ -98,6 +98,80 @@ var labelSoilData = [];
 var chartLightData = [];
 var labelLightData = [];
 
+var chartLightRelayData = [];
+var labelLightRelayData = [];
+
+var chartWaterPumpRelayData = [];
+var labelWaterPumpRelayData = [];
+
+function getLightRelayData() {
+
+    MongoClient.connect(connectionString, function(err, client) {
+
+        var temp1 = [];
+        var temp2 = [];
+
+        assert.equal(null, err);
+
+        const db = client.db("bk-iot-test");
+
+        var cursor = db.collection('bk-iot-light-relay').find().sort({"created_at":-1});
+
+        cursor.forEach(function(doc, err) {
+            assert.equal(null, err);
+
+            //console.log(doc.value);
+
+            temp1.push(JSON.parse(doc.value).data);
+            temp2.push(doc.created_at);
+
+        }, function() {
+            client.close();
+            chartLightRelayData = temp1;
+            labelLightRelayData = temp2;
+        });
+    });
+
+    /*
+    console.log(chartLightRelayData);
+    console.log(labelLightRelayData);
+    */
+}
+
+function getWaterPumpRelayData() {
+
+    MongoClient.connect(connectionString, function(err, client) {
+
+        var temp1 = [];
+        var temp2 = [];
+
+        assert.equal(null, err);
+
+        const db = client.db("bk-iot-test");
+
+        var cursor = db.collection('bk-iot-water-pump-relay').find().sort({"created_at":-1});
+
+        cursor.forEach(function(doc, err) {
+            assert.equal(null, err);
+
+            //console.log(doc.value);
+
+            temp1.push(JSON.parse(doc.value).data);
+            temp2.push(doc.created_at);
+
+        }, function() {
+            client.close();
+            chartWaterPumpRelayData = temp1;
+            labelWaterPumpRelayData = temp2;
+        });
+    });
+
+    /*
+    console.log(chartWaterPumpRelayData);
+    console.log(labelWaterPumpRelayData);
+    */
+}
+
 function getSoilData() {
 
     MongoClient.connect(connectionString, function(err, client) {
@@ -113,7 +187,8 @@ function getSoilData() {
 
         cursor.forEach(function(doc, err) {
             assert.equal(null, err);
-            console.log(doc.value);
+
+            //console.log(doc.value);
 
             temp2.push(doc.created_at);
             temp1.push(JSON.parse(doc.value).data);
@@ -129,8 +204,10 @@ function getSoilData() {
         });
     });
 
+    /*
     console.log(chartSoilData);
     console.log(labelSoilData);
+    */
 }
 
 function getLightData() {
@@ -148,37 +225,40 @@ function getLightData() {
 
         cursor.forEach(function(doc, err) {
             assert.equal(null, err);
-            console.log(doc.value);
+
+            //console.log(doc.value);
 
             temp2.push(doc.created_at);
             temp1.push(JSON.parse(doc.value).data);
 
         }, function() {
             client.close();
-            /*
-            console.log(chartSoilData);
-            console.log(labelSoilData);
-            */
             chartLightData = temp1;
             labelLightData = temp2;
         });
     });
 
+    /*
     console.log(chartLightData);
     console.log(labelLightData);
+    */
 }
 
-io.on('connection', function(socket) {
+io.on('connection', socket => {
     console.log('Connected to socket.io successfully');
 
     setInterval(function() {
 
         getSoilData();
         getLightData();
+        getLightRelayData();
+        getWaterPumpRelayData();
 
         console.log('emitting');
-        socket.emit('index', chartSoilData, labelSoilData, chartLightData, labelLightData);
-    }, 1000);
+
+        socket.emit('send_data', chartSoilData, labelSoilData, chartLightData, labelLightData, chartWaterPumpRelayData, labelWaterPumpRelayData, chartLightRelayData, labelLightRelayData);
+
+    }, 10000);
 
 });
 
