@@ -1,5 +1,4 @@
 # Smart Farm System Project
----
 
 ## Technologies
 * NodeJs - version 16.1.0  (server)
