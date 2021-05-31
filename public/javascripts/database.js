@@ -1,18 +1,7 @@
-const { MongoClient } = require("mongodb");
+const socket = io();
 
-// Replace the following with your Atlas connection string                                                                                                                                        
-const url = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/smart_farm?retryWrites=true&w=majority";
-const client = new MongoClient(url);
-async function run() {
-    try {
-        await client.connect();
-        console.log("Connected correctly to server");
-    } catch (err) {
-        console.log(err.stack);
-    }
-    finally {
-        await client.close();
-    }
-}
+console.log('hello');
 
-run().catch(console.dir);
+socket.on('database', function(data) {
+    console.log('Got announcement:', data);
+});

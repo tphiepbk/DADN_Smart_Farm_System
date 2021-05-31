@@ -100,10 +100,12 @@
                                 <canvas id="light_chart"></canvas>
 
                                 <p class="card-text">Representing state of light</p>
+                                <a href="/get-data">LOAD DATA</a>
                                 <!--
-                                <button type="button" onclick="loadLightChart()" class="btn btn-primary"><span class="cil-chart btn-icon mr-2"></span> Load chart</button>
+                                <button type="button" href="/get-data" class="btn btn-primary"><span class="cil-chart btn-icon mr-2"></span> Load chart</button>
                                 -->
                             </div>
+
                         </div>
 
                     </div>
@@ -122,8 +124,10 @@
 
         <!--
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
+        <script src="sensor_data.js"></script>
         <script src="index.js"></script>
         -->
-        <script src="sensor_data.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="test_index.js"></script>
     </body>
 </html>

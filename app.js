@@ -1,6 +1,13 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require('body-parser');
+
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
+
 //require("./db/conn");
 //require("./db/get_data");
 require("./db/get_data_test");
@@ -8,12 +15,16 @@ require("./db/get_data_test");
 const app = express();
 const port = process.env.PORT || 3000;
 
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
+
 const staticpath = path.join(__dirname, "./public");
 const templatepath = path.join(__dirname, "./views");
 const imagepath = path.join(__dirname, "./public/images");
 const scriptpath = path.join(__dirname, "./public/javascripts");
 
 // Middleware
+app.use(express.static('public'));
 app.use(express.static(staticpath));
 app.use(express.static(imagepath));
 app.use(express.static(scriptpath));
@@ -70,8 +81,99 @@ app.get("/water_pump", (req, res) => {
 });
 */
 
+/*
 app.listen(port, () =>{
     console.log('Server is running at port ' + port);
+});
+*/
+
+server.listen(port, () =>{
+    console.log('Server is running at port ' + port);
+});
+
+// Get data from mongoDB
+var chartSoilData = [];
+var labelSoilData = [];
+
+var chartLightData = [];
+var labelLightData = [];
+
+function getSoilData() {
+
+    MongoClient.connect(connectionString, function(err, client) {
+
+        assert.equal(null, err);
+
+        const db = client.db("bk-iot-test");
+
+        var cursor = db.collection('bk-iot-soil').find().sort({"created_at":-1});
+
+        cursor.forEach(function(doc, err) {
+            assert.equal(null, err);
+            console.log(doc.value);
+
+            labelSoilData.push(doc.created_at);
+            chartSoilData.push(JSON.parse(doc.value).data);
+
+        }, function() {
+            client.close();
+            /*
+            console.log(chartSoilData);
+            console.log(labelSoilData);
+            chartSoilData = temp1;
+            labelSoilData = temp2;
+            */
+        });
+    });
+
+    console.log(chartSoilData);
+    console.log(labelSoilData);
+}
+
+function getLightData() {
+
+    MongoClient.connect(connectionString, function(err, client) {
+
+        assert.equal(null, err);
+
+        const db = client.db("bk-iot-test");
+
+        var cursor = db.collection('bk-iot-light').find().sort({"created_at":-1});
+
+        cursor.forEach(function(doc, err) {
+            assert.equal(null, err);
+            console.log(doc.value);
+
+            labelLightData.push(doc.created_at);
+            chartLightData.push(JSON.parse(doc.value).data);
+
+        }, function() {
+            client.close();
+            /*
+            console.log(chartSoilData);
+            console.log(labelSoilData);
+            chartSoilData = temp1;
+            labelSoilData = temp2;
+            */
+        });
+    });
+
+    console.log(chartLightData);
+    console.log(labelLightData);
+}
+
+io.on('connection', function(socket) {
+    console.log('Connected to socket.io successfully');
+
+    setInterval(function() {
+
+        getSoilData();
+        getLightData();
+
+        console.log('emitting');
+        socket.emit('index', chartSoilData, labelSoilData, chartLightData, labelLightData);
+    }, 5000);
+
 });
 
 // ! Prevent app crash
