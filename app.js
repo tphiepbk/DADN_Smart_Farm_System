@@ -22,7 +22,7 @@ require('./config/passport')(passport);
 
 // DB Config
 mongoose
-  .connect("mongodb://localhost/databaseName", {
+  .connect("mongodb+srv://Banvoiloiich:123@cluster0.b4qy2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
