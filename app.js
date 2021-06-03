@@ -1,16 +1,40 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require('body-parser');
-
+const mongoose = require("mongoose");
 const MongoClient = require('mongodb').MongoClient;
+const expressLayouts = require('express-ejs-layouts');
+const passport = require('passport');
+const flash = require('connect-flash');
+const session = require('express-session');
 const assert = require('assert');
 
+const User = require("./models/User");
 // Connection URL
 const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
 
 //require("./db/conn");
 //require("./db/get_data");
 require("./db/get_data_test");
+
+// Passport Config
+require('./config/passport')(passport);
+
+// DB Config
+mongoose
+  .connect("mongodb://localhost/databaseName", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    console.log("connected to mongodb cloud! :)");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,23 +58,56 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.set("views", templatepath);
 
+// Express body parser
+app.use(express.urlencoded({ extended: true }));
+
+// Express session
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
+});
+
 // Routes
-const index_router = require('./routes/index');
-const notification_router = require('./routes/notification');
-const light_system_statistic = require('./routes/light_system_statistic');
-const light_router = require('./routes/light');
-const water_pump_system_statistic_router = require('./routes/water_pump_system_statistic');
-const water_pump_router = require('./routes/water_pump');
-const database_router = require('./routes/database');
+// Routes
+app.use('/', require('./routes/index.js'));
+app.use('/', require('./routes/users.js'));
+// const index_router = require('./routes/index');
+// const notification_router = require('./routes/notification');
+// const light_system_statistic = require('./routes/light_system_statistic');
+// const light_router = require('./routes/light');
+// const water_pump_system_statistic_router = require('./routes/water_pump_system_statistic');
+// const water_pump_router = require('./routes/water_pump');
+// const database_router = require('./routes/database');
+// const login_router = require('./routes/login');
 
-app.use('/', index_router);
-app.use('/notification', notification_router);
-app.use('/light', light_router);
-app.use('/light_system_statistic', light_system_statistic);
-app.use('/water_pump_system_statistic', water_pump_system_statistic_router);
-app.use('/water_pump', water_pump_router);
-app.use('/database', database_router);
-
+// app.use('/', index_router);
+// app.use('/notification', notification_router);
+// app.use('/light', light_router);
+// app.use('/light_system_statistic', light_system_statistic);
+// app.use('/water_pump_system_statistic', water_pump_system_statistic_router);
+// app.use('/water_pump', water_pump_router);
+// app.use('/database', database_router);
+// app.use('/login', login_router);
 /*
 app.get("/", (req, res) => {
     res.render("index");
