@@ -106,7 +106,7 @@ var light_chart = new Chart(ctxLight, {
     data: {
         labels: labeldataLight,
         datasets: [{
-            label: 'Soil',
+            label: 'Light',
             data: chartdataLight,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -117,7 +117,7 @@ var light_chart = new Chart(ctxLight, {
                 'rgba(255, 159, 64, 0.2)'
             ],
             borderColor: [
-                'rgba(255, 99, 132, 1)',
+                'rgba(106, 90, 205, 1)',
                 'rgba(54, 162, 235, 1)',
                 'rgba(255, 206, 86, 1)',
                 'rgba(75, 192, 192, 1)',

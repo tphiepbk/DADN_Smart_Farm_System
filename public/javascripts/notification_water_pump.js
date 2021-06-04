@@ -1,7 +1,10 @@
 var timeOld ;
 var timeNew ;
 var totalTime = 0;
-var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+
+//var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+const dataUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=aio_sRyV27Jw7nbPzH7V8GaZ9lFlnK3Y"
+
 function time(ntime, otime){
     var t1 = ntime.getTime();
     var t2 = otime.getTime();

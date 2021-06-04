@@ -6,6 +6,10 @@ var light_chart;
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
 /*
 $.getJSON('https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7', function(data) {
     console.log(data);
@@ -17,7 +21,6 @@ $.getJSON('https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data
         chrtdataLight.push(jsonData);
     }
 });
-*/
 
 function getData() {
     var req = new XMLHttpRequest();
@@ -55,11 +58,30 @@ function updateChart() {
 
 getData();
 createChart();
+*/
 
-var intervalId = window.setInterval(function(){
-    labeldataLight = [];
-    chartdataLight = [];
+var ctxLight = document.getElementById("light_chart").getContext("2d");
 
-    getData();
-    updateChart();
-}, 1000);
+light_chart = new Chart(ctxLight, {
+    type: 'line',
+    data: {
+    labels: labeldataLight,
+        datasets: [{
+            label: 'State',
+            data: chartdataLight,
+            backgroundColor: "rgb(0,192,255)"
+        }]
+    }
+});
+
+socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
+    chartdataLightRelay  = ele7;
+    labeldataLightRelay = ele8;
+
+    console.log('chart data light:', chartdataLightRelay);
+    console.log('label data light:', labeldataLightRelay);
+
+    light_chart.data.labels = labeldataLightRelay;
+    light_chart.data.datasets[0].data = chartdataLightRelay;
+    light_chart.update();
+});

@@ -5,6 +5,9 @@ var water_pump_chart
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
 /*
 $.getJSON('https://io.adafruit.com/api/v2/tphiepbk/feeds/dadn-water-pump/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7', function(data) {
     console.log(data);
@@ -16,7 +19,6 @@ $.getJSON('https://io.adafruit.com/api/v2/tphiepbk/feeds/dadn-water-pump/data.js
         }
     }
 });
-*/
 
 function getData() {
     var req = new XMLHttpRequest();
@@ -61,3 +63,30 @@ var intervalId = window.setInterval(function(){
     getData();
     updateChart();
 }, 1000);
+*/
+
+var ctxWaterPump = document.getElementById("water_pump_chart").getContext("2d");
+
+water_pump_chart = new Chart(ctxWaterPump, {
+    type: 'line',
+    data: {
+    labels: labeldataWaterPump,
+        datasets: [{
+            label: 'State',
+            data: chartdataWaterPump,
+            backgroundColor: "rgb(0,192,255)"
+        }]
+    }
+});
+
+socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
+    chartdataWaterPump  = ele5;
+    labeldataWaterPump = ele6;
+
+    console.log('chart data water pump relay:', chartdataWaterPump);
+    console.log('label data water pump relay:', labeldataWaterPump);
+
+    water_pump_chart.data.labels = labeldataWaterPump;
+    water_pump_chart.data.datasets[0].data = chartdataWaterPump;
+    water_pump_chart.update();
+});
