@@ -170,7 +170,7 @@ function getLightRelayData() {
 
         assert.equal(null, err);
 
-        const db = client.db("bk-iot-test");
+        const db = client.db("bk-iot");
 
         var cursor = db.collection('bk-iot-light-relay').find().sort({"created_at":-1});
 
@@ -204,7 +204,7 @@ function getWaterPumpRelayData() {
 
         assert.equal(null, err);
 
-        const db = client.db("bk-iot-test");
+        const db = client.db("bk-iot");
 
         var cursor = db.collection('bk-iot-water-pump-relay').find().sort({"created_at":-1});
 
@@ -238,7 +238,7 @@ function getSoilData() {
 
         assert.equal(null, err);
 
-        const db = client.db("bk-iot-test");
+        const db = client.db("bk-iot");
 
         var cursor = db.collection('bk-iot-soil').find().sort({"created_at":-1});
 
@@ -276,7 +276,7 @@ function getLightData() {
 
         assert.equal(null, err);
 
-        const db = client.db("bk-iot-test");
+        const db = client.db("bk-iot");
 
         var cursor = db.collection('bk-iot-light').find().sort({"created_at":-1});
 

@@ -6,10 +6,18 @@ const MongoClient = require("mongodb").MongoClient;
 // Connection string
 const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
 
+/*
 const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 const light_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 const soil_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 const water_pump_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+*/
+
+// Real devices
+const light_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=aio_sRyV27Jw7nbPzH7V8GaZ9lFlnK3Y"
+const light_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=aio_sRyV27Jw7nbPzH7V8GaZ9lFlnK3Y"
+const soil_url = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_HmqE80NeMr7TJFY6dyfuGNrR81R5"
+const water_pump_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=aio_sRyV27Jw7nbPzH7V8GaZ9lFlnK3Y"
 
 function upload(collectionName, data) {
     MongoClient.connect(connectionString, function(err, client) {
@@ -17,7 +25,7 @@ function upload(collectionName, data) {
         if (err) throw err;
         assert.equal(null, err);
 
-        const db = client.db('bk-iot-test');
+        const db = client.db('bk-iot');
 
         // Use index to prevent duplicate
         db.collection(collectionName).createIndex({"id":1}, {unique: true});
