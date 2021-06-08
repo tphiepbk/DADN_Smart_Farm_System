@@ -12,8 +12,12 @@ const assert = require('assert');
 const User = require("./models/User");
 
 // Connection URL
+<<<<<<< HEAD
 //const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
 const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
+=======
+const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+>>>>>>> 023fce13cab85338d2bf7778207dfd296feac0fc
 
 //require("./db/conn");
 //require("./db/get_data");
