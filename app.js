@@ -10,8 +10,10 @@ const session = require('express-session');
 const assert = require('assert');
 
 const User = require("./models/User");
+
 // Connection URL
-const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
+//const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
+const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
 
 //require("./db/conn");
 //require("./db/get_data");
