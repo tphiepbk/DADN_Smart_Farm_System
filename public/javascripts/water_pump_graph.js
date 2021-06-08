@@ -70,10 +70,10 @@ var ctxWaterPump = document.getElementById("water_pump_chart").getContext("2d");
 water_pump_chart = new Chart(ctxWaterPump, {
     type: 'line',
     data: {
-    labels: labeldataWaterPump,
+    labels: labeldataWaterPump.slice(0,10),
         datasets: [{
             label: 'State',
-            data: chartdataWaterPump,
+            data: chartdataWaterPump.slice(0,10),
             backgroundColor: "rgb(0,192,255)"
         }]
     }

@@ -65,10 +65,10 @@ var ctxLight = document.getElementById("light_chart").getContext("2d");
 light_chart = new Chart(ctxLight, {
     type: 'line',
     data: {
-    labels: labeldataLight,
+    labels: labeldataLight.slice(0,10),
         datasets: [{
             label: 'State',
-            data: chartdataLight,
+            data: chartdataLight.slice(0,10),
             backgroundColor: "rgb(0,192,255)"
         }]
     }
