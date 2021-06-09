@@ -44,12 +44,6 @@ function getData() {
     });
 };
 
-router.get('/database', ensureAuthenticated, (req, res) =>
-    res.render('database', {
-    user: req.user
-  })
-);
-
 router.get('/light_system_statistic', ensureAuthenticated, (req, res) =>
     res.render('light_system_statistic', {
     user: req.user
