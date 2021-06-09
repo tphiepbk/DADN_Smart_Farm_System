@@ -73,7 +73,7 @@ document.getElementById("textCurrentLightValue").style.display = "none";
 // * For light chart
 var ctxLight = document.getElementById("light_chart").getContext("2d");
 
-light_chart = new Chart(ctxLight, {
+var light_chart = new Chart(ctxLight, {
     type: 'bar',
     data: {
         labels: [],

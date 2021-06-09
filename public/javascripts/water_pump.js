@@ -1,3 +1,7 @@
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
@@ -15,79 +19,21 @@ var feedsArrayCreatedAt = [];
 
 var intervalId;
 
-var client;
-var table = document.getElementById("recent-feeds-table");
-
-document.addEventListener('DOMContentLoaded', function () {
-    var checkbox = document.querySelector('input[type="checkbox"]');
-
-    checkbox.addEventListener('change', function () {
-        if (checkbox.checked) {
-            turnOn();
-            console.log('Turn on');
-        } else {
-            turnOff();
-            console.log('Turn off');
-        }
-    });
-});
+var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
 // send a message
-function turnOn () {
-    stopGettingData();
+function turnOn() {
+    console.log('Turn on');
+    document.getElementById("textOn").style.display = "block";
+    document.getElementById("textOff").style.display = "none";
     client.send(topic, messageOn);
-    startGettingData();
 }
 
-function turnOff () {
-    stopGettingData();
+function turnOff() {
+    console.log('Turn off');
+    document.getElementById("textOn").style.display = "none";
+    document.getElementById("textOff").style.display = "block";
     client.send(topic, messageOff);
-    startGettingData();
-}
-
-function getData() {
-
-    feedsArray = [];
-    feedsArrayCreatedAt = [];
-
-    var req = new XMLHttpRequest();
-    req.responseType = 'json';
-    req.open('GET', dataUrl, true);
-    req.onload  = function() {
-        var jsonResponse = req.response;
-        console.log(jsonResponse.length);
-        console.log(JSON.parse(jsonResponse[0].value).data);
-
-        var checkbox = document.querySelector('input[type="checkbox"]');
-
-        var toggle = parseInt(JSON.parse(jsonResponse[0].value).data);
-        if (toggle == 1) {
-            checkbox.checked = true;
-        }
-        else {
-            checkbox.checked = false;
-        }
-
-        for (var i = 0 ; i < 10 ; i++) {
-            feedsArray.push(JSON.parse(jsonResponse[i].value));
-            feedsArrayCreatedAt.push(jsonResponse[i].created_at);
-        }
-    };
-    req.send();
-}
-
-function init() {
-    console.log("Connecting...");
-    client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
-
-    client.connect({ 
-        password : password,
-        userName: username,
-        onSuccess: onConnect 
-    });
 }
 
 // called when the client connects
@@ -108,54 +54,121 @@ function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
 }
 
-function clearTable() {
-    while (table.rows.length != 1) {
-        table.deleteRow(1);
+console.log("Connecting...");
+var client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
+
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+client.connect({ 
+    password : password,
+    userName: username,
+    onSuccess: onConnect 
+});
+
+document.getElementById("textOn").style.display = "none";
+document.getElementById("textOff").style.display = "none";
+document.getElementById("textCurrentSoilValue").style.display = "none";
+
+// * For light chart
+var ctxWaterPump = document.getElementById("water_pump_chart").getContext("2d");
+
+var water_pump_chart = new Chart(ctxWaterPump, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'On',
+            data: [],
+            backgroundColor: [
+                'rgb(60, 179, 113)'
+            ],
+            borderColor: [
+                'rgb(201, 203, 207)'
+            ],
+            borderWidth: 1
+        },
+        {
+            label: 'Off',
+            data: [],
+            backgroundColor: [
+                'rgb(255, 0, 0)'
+            ],
+            borderColor: [
+                'rgb(201, 203, 207)'
+            ],
+            borderWidth: 1
+        }
+        ]
     }
-}
+});
 
-function startGettingData() {
-    intervalId = window.setInterval(function(){
-        getData();
-    }, 1000);
-}
+socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
+    var chartDataSoil = ele1;
+    var chartDataWaterPumpRelay = ele5;
+    var labelDataWaterPumpRelay = ele6;
 
-function stopGettingData() {
-    clearInterval(intervalId);
-}
+    console.log('chart data soil:', chartDataSoil);
+    console.log('chart data water pump relay:', chartDataWaterPumpRelay);
+    console.log('label data water pump relay:', labelDataWaterPumpRelay);
 
-function refreshTable() {
+    document.getElementById("textCurrentSoilValue").style.display = "block";
+    document.getElementById("textCurrentSoilValue").innerHTML = chartDataSoil[0];
 
-    stopGettingData();
+    var labelDataWaterPumpRelayDate = [];
+    var numberOfWaterPumpOn = [];
+    var numberOfWaterPumpOff = [];
 
-    var cols = ['id', 'name', 'data', 'unit'];
+    var currentNumberWaterPumpOn = 0;
+    var currentNumberWaterPumpOff = 0;
 
-    clearTable();
-    
-    // Adding the data to the table
-    for (var i = 0; i < feedsArray.length; i++) {
-        var newRow = table.insertRow(-1);
-        for (var j = 0; j < 6 ; j++) {
-            if (j === 0) {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(i+1);
-                newCell.appendChild(newText);
-            }
-            else if (j === 5) {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(feedsArrayCreatedAt[i]);
-                newCell.appendChild(newText);
-            }
-            else {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(feedsArray[i][cols[j-1]]);
-                newCell.appendChild(newText);
-            }
+    for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
+        var currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
+        var currentStateOfSwitch = parseInt(chartDataWaterPumpRelay[i]);
+
+        if (currentDate != labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length - 1] && labelDataWaterPumpRelayDate.length != 0) {
+            numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
+            numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
+            currentNumberWaterPumpOff = 0;
+            currentNumberWaterPumpOn = 0;
+        }
+
+        if (currentStateOfSwitch == 1) {
+            currentNumberWaterPumpOn++;
+        }
+        else {
+            currentNumberWaterPumpOff++;
+        }
+
+        if (labelDataWaterPumpRelayDate.length == 0 || labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length-1] !== currentDate) {
+            labelDataWaterPumpRelayDate.push(currentDate);
         }
     }
 
-    startGettingData();
-}	
+    console.log(labelDataWaterPumpRelayDate);
+    console.log(numberOfWaterPumpOn);
+    console.log(numberOfWaterPumpOff);
 
-init();
-startGettingData();
+    water_pump_chart.data.labels = labelDataWaterPumpRelayDate;
+    water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn;
+    water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff;
+
+    water_pump_chart.update();
+
+    var currentSoilValue = parseInt(chartDataSoil[0]);
+    var currentWaterPumpRelayValue =  parseInt(chartDataWaterPumpRelay[0]);
+
+    if (currentWaterPumpRelayValue == 0) {
+        document.getElementById("textOn").style.display = "none";
+        document.getElementById("textOff").style.display = "block";
+    }
+    else {
+        document.getElementById("textOn").style.display = "block";
+        document.getElementById("textOff").style.display = "none";
+    }
+
+    if (checkboxAutomatic.checked == true) {
+        if (currentSoilValue >= 100 && currentWaterPumpRelayValue == 1) turnOff();
+        else if (currentSoilValue < 100 && currentWaterPumpRelayValue == 0) turnOn();
+    }
+});
