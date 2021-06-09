@@ -1,3 +1,7 @@
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
 var port = 443;
 var host = "io.adafruit.com";
 var username = "tphiepbk";
@@ -15,79 +19,21 @@ var feedsArrayCreatedAt = [];
 
 var intervalId;
 
-var client;
-var table = document.getElementById("recent-feeds-table");
-
-document.addEventListener('DOMContentLoaded', function () {
-    var checkbox = document.querySelector('input[type="checkbox"]');
-
-    checkbox.addEventListener('change', function () {
-        if (checkbox.checked) {
-            turnOn();
-            console.log('Turn on');
-        } else {
-            turnOff();
-            console.log('Turn off');
-        }
-    });
-});
+var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
 // send a message
 function turnOn() {
-    stopGettingData();
+    console.log('Turn on');
+    document.getElementById("textOn").style.display = "block";
+    document.getElementById("textOff").style.display = "none";
     client.send(topic, messageOn);
-    startGettingData();
 }
 
 function turnOff() {
-    stopGettingData();
+    console.log('Turn off');
+    document.getElementById("textOn").style.display = "none";
+    document.getElementById("textOff").style.display = "block";
     client.send(topic, messageOff);
-    startGettingData();
-}
-
-function getData() {
-
-    feedsArray = [];
-    feedsArrayCreatedAt = [];
-
-    var req = new XMLHttpRequest();
-    req.responseType = 'json';
-    req.open('GET', dataUrl, true);
-    req.onload = function () {
-        var jsonResponse = req.response;
-        console.log(jsonResponse.length);
-        console.log(JSON.parse(jsonResponse[0].value).data);
-
-        var checkbox = document.querySelector('input[type="checkbox"]');
-
-        var toggle = parseInt(JSON.parse(jsonResponse[0].value).data);
-        if (toggle == 1) {
-            checkbox.checked = true;
-        }
-        else {
-            checkbox.checked = false;
-        }
-
-        for (var i = 0; i < 10; i++) {
-            feedsArray.push(JSON.parse(jsonResponse[i].value));
-            feedsArrayCreatedAt.push(jsonResponse[i].created_at);
-        }
-    };
-    req.send();
-}
-
-function init() {
-    console.log("Connecting...");
-    client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
-
-    client.connect({
-        password: password,
-        userName: username,
-        onSuccess: onConnect
-    });
 }
 
 // called when the client connects
@@ -108,54 +54,39 @@ function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
 }
 
-function clearTable() {
-    while (table.rows.length != 1) {
-        table.deleteRow(1);
+console.log("Connecting...");
+var client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
+
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+client.connect({
+    password: password,
+    userName: username,
+    onSuccess: onConnect
+});
+
+document.getElementById("textOn").style.display = "none";
+document.getElementById("textOff").style.display = "none";
+document.getElementById("textCurrentLightValue").style.display = "none";
+
+socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
+    var chartDataLight = ele3;
+    var chartDataLightRelay = ele7;
+
+    console.log('chart data light:', chartDataLight);
+    console.log('chart data light relay:', chartDataLightRelay);
+
+    document.getElementById("textCurrentLightValue").style.display = "block";
+    document.getElementById("textCurrentLightValue").innerHTML = chartDataLight[0];
+
+    var currentLightValue = parseInt(chartDataLight[0]);
+    var currentLightRelayValue =  parseInt(chartDataLightRelay[0]);
+
+    if (checkboxAutomatic.checked == true) {
+        if (currentLightValue >= 100 && currentLightRelayValue == 1) turnOff();
+        else if (currentLightValue < 100 && currentLightRelayValue == 0) turnOn();
+        else if (currentLightValue < 100 && currentLightRelayValue == 1) turnOn();
+        else if (currentLightValue >= 100 && currentLightRelayValue == 0) turnOff();
     }
-}
-
-function startGettingData() {
-    intervalId = window.setInterval(function () {
-        getData();
-    }, 1000);
-}
-
-function stopGettingData() {
-    clearInterval(intervalId);
-}
-
-function refreshTable() {
-
-    stopGettingData();
-
-    var cols = ['id', 'name', 'data', 'unit'];
-
-    clearTable();
-
-    // Adding the data to the table
-    for (var i = 0; i < feedsArray.length; i++) {
-        var newRow = table.insertRow(-1);
-        for (var j = 0; j < 6; j++) {
-            if (j === 0) {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(i + 1);
-                newCell.appendChild(newText);
-            }
-            else if (j === 5) {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(feedsArrayCreatedAt[i]);
-                newCell.appendChild(newText);
-            }
-            else {
-                var newCell = newRow.insertCell(-1);
-                var newText = document.createTextNode(feedsArray[i][cols[j - 1]]);
-                newCell.appendChild(newText);
-            }
-        }
-    }
-
-    startGettingData();
-}
-
-init();
-startGettingData();
+});
