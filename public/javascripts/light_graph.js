@@ -6,10 +6,6 @@ var light_chart;
 
 var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
-const socket = io('http://localhost:3000/', {
-    reconnectionDelayMax: 7000
-});
-
 /*
 $.getJSON('https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7', function(data) {
     console.log(data);

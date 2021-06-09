@@ -317,7 +317,7 @@ io.on('connection', socket => {
 
         socket.emit('send_data', chartSoilData, labelSoilData, chartLightData, labelLightData, chartWaterPumpRelayData, labelWaterPumpRelayData, chartLightRelayData, labelLightRelayData);
 
-    }, 5000);
+    }, 6000);
 
 });
 

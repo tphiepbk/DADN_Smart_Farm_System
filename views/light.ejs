@@ -77,14 +77,14 @@
                         <div class="card-deck">
 
                             <div class="card">
-                                <div class="card-body">
+                                <div class="card-header"><strong>Current State</strong></div>
 
-                                    <p><strong class="card-text">Details</strong></p>
+                                <div class="card-body">
 
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="c-callout c-callout-info b-t-1 b-r-1 b-b-1">
-                                                <small class="text-muted">State</small><br>
+                                                <small class="text-muted">Light system</small><br>
                                                 <strong id="textOn" class="h4">On</strong>
                                                 <strong id="textOff" class="h4">Off</strong>
                                             </div>
@@ -92,7 +92,7 @@
 
                                         <div class="col-sm-4">
                                             <div class="c-callout c-callout-danger b-t-1 b-r-1 b-b-1">
-                                                <small class="text-muted">Current light value</small><br>
+                                                <small class="text-muted">Light sensor value</small><br>
                                                 <strong id="textCurrentLightValue" class="h4">22,643</strong>
                                             </div>
                                         </div>
@@ -134,6 +134,19 @@
 
                         </div>
 
+                    </div>
+
+                    <br>
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="light_chart" height = "10rem" width = "20rem"></canvas>
+                                </div>
+                                <p class="card-text"><strong>State of light system per day</strong></p>
+                            </div>
+                        </div>
                     </div>
                 </main>
             </div>
