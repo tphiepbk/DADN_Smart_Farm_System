@@ -8,8 +8,10 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
 const assert = require('assert');
+const fetch = require("node-fetch");
 
 const User = require("./models/User");
+const { compareSync } = require("bcryptjs");
 
 // Connection URL
 //const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
@@ -154,14 +156,84 @@ server.listen(port, () =>{
 var chartSoilData = [];
 var labelSoilData = [];
 
+var prev_chartSoilData = [];
+var prev_labelSoilData = [];
+
 var chartLightData = [];
 var labelLightData = [];
+
+var prev_chartLightData = [];
+var prev_labelLightData = [];
 
 var chartLightRelayData = [];
 var labelLightRelayData = [];
 
+var prev_chartLightRelayData = [];
+var prev_labelLightRelayData = [];
+
 var chartWaterPumpRelayData = [];
 var labelWaterPumpRelayData = [];
+
+var prev_chartWaterPumpRelayData = [];
+var prev_labelWaterPumpRelayData = [];
+
+const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+const light_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+const soil_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+const water_pump_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+
+function updateData(input_chartLightData, input_labelLightData) {
+    chartLightData = input_chartLightData;
+    labelLightData = input_labelLightData;
+}
+
+function getAllData(lightUrl, soilUrl, lightRelayUrl, waterPumpRelayUrl) {
+    fetch(lightUrl)
+    .then(data=>{return data.json()})
+    .then(res=>{
+        for (var i = 0 ; i < res.length ; i++) {
+            temp3.push(JSON.parse(res[i].value).data);
+            temp4.push(res[i].created_at);
+        }
+        /*
+        console.log(temp3);
+        console.log(temp4);
+        */
+        updateData(temp3, temp4);
+    });
+};
+
+function getData(url) {
+    return new Promise((resolve, reject) => {
+        fetch(url)
+        .then(response => {
+            return response.json();
+        }).then(data_from_fetched => {
+            var temp1 = [], temp2 = [];
+            for (var i = 0 ; i < data_from_fetched.length ; i++) {
+                temp1.push(JSON.parse(data_from_fetched[i].value).data);
+                temp2.push(data_from_fetched[i].created_at);
+            }
+            resolve([temp1, temp2]);
+        })
+    })
+}
+
+/*
+var arr = [];
+getData(light_url).then(data => {
+    arr = data[0];
+});
+console.log(arr);
+*/
+console.log(getData(light_url));
+
+/*
+getAllData(light_url, soil_url, light_relay_url, water_pump_relay_url);
+
+console.log(chartLightData);
+console.log(labelLightData);
+*/
 
 function getLightRelayData() {
 
@@ -303,9 +375,17 @@ function getLightData() {
     */
 }
 
+/*
+getSoilData();
+getLightData();
+getLightRelayData();
+getWaterPumpRelayData();
+*/
+
 io.on('connection', socket => {
     console.log('Connected to socket.io successfully');
 
+    /*
     setInterval(function() {
 
         getSoilData();
@@ -317,9 +397,34 @@ io.on('connection', socket => {
 
         socket.emit('send_data', chartSoilData, labelSoilData, chartLightData, labelLightData, chartWaterPumpRelayData, labelWaterPumpRelayData, chartLightRelayData, labelLightRelayData);
 
-    }, 6000);
+    }, 7000);
+    */
 
+    /*
+    if (prev_chartLightData.length != chartLightData.length || prev_chartSoilData.length != chartSoilData.length || prev_chartLightRelayData != chartLightRelayData || prev_chartWaterPumpRelayData != chartWaterPumpRelayData) {
+        prev_chartLightData = chartLightData;
+        prev_chartSoilData = chartSoilData;
+        prev_chartLightRelayData = chartLightRelayData;
+        prev_chartWaterPumpRelayData = chartWaterPumpRelayData;
+    }
+
+    setTimeout(() => {
+        console.log('emitting first time');
+        socket.emit('send_data_first_time', chartSoilData, labelSoilData, chartLightData, labelLightData, chartWaterPumpRelayData, labelWaterPumpRelayData, chartLightRelayData, labelLightRelayData);
+    }, 3000);
+
+    socket.on('return', function(element) {
+        getSoilData();
+        getLightData();
+        getLightRelayData();
+        getWaterPumpRelayData();
+
+        console.log('emitting');
+        socket.emit('send_data', chartSoilData, labelSoilData, chartLightData, labelLightData, chartWaterPumpRelayData, labelWaterPumpRelayData, chartLightRelayData, labelLightRelayData);
+    });
+    */
 });
+
 
 // ! Prevent app crash
 process.on('uncaughtException', (error, origin) => {
