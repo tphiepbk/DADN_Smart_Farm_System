@@ -19,31 +19,38 @@ var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
 var repeat = null;
+var intervalTime = 4000;
 
 // send a message
 function turnOn() {
-    console.log('Turn on');
-    document.getElementById("textOn").style.display = "block";
-    document.getElementById("textOff").style.display = "none";
-    client.send(topic, messageOn);
 
-    clearInterval(repeat);
+    setTimeout(() => {
+        console.log('Turn on');
+        document.getElementById("textOn").style.display = "block";
+        document.getElementById("textOff").style.display = "none";
+        clearInterval(repeat);
+        client.send(topic, messageOn);
+    }, 1000);
 }
 
 function turnOff() {
-    console.log('Turn off');
-    document.getElementById("textOn").style.display = "none";
-    document.getElementById("textOff").style.display = "block";
-    client.send(topic, messageOff);
 
-    clearInterval(repeat);
+    setTimeout(() => {
+        console.log('Turn off');
+        document.getElementById("textOn").style.display = "none";
+        document.getElementById("textOff").style.display = "block";
+        clearInterval(repeat);
+        client.send(topic, messageOff);
+    }, 1000);
 }
 
 // called when the client connects
 function onConnect() {
     client.subscribe(topic);
     console.log("Connect successfully");
-    fetching();
+    loader();
+    //loadRelay();
+    //loadLight();
 }
 
 // called when the client loses its connection
@@ -58,8 +65,10 @@ function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
     
     repeat = setInterval(() => {
-        fetching();
-    }, 5000);
+        loader();
+        //loadRelay();
+        //loadLight();
+    }, intervalTime);
 }
 
 console.log("Connecting...");
@@ -110,6 +119,125 @@ var light_chart = new Chart(ctxLight, {
         ]
     }
 });
+
+function reqListenerRelay() {
+    var chartDataLightRelay = [];
+    var labelDataLightRelay = [];
+
+    var res = JSON.parse(this.responseText);
+
+    for (var i = 0 ; i < res.length ; i++) {
+        chartDataLightRelay.push(JSON.parse(res[i].value).data);
+        labelDataLightRelay.push(res[i].created_at);
+    }
+
+    console.log('chart data light relay:', chartDataLightRelay);
+    console.log('label data light relay:', labelDataLightRelay);
+
+    var currentStateOfLight = chartDataLightRelay[0];
+    if (currentStateOfLight == 1) {
+        document.getElementById("textOn").style.display = "block";
+        document.getElementById("textOff").style.display = "none";
+    }
+    else {
+        document.getElementById("textOn").style.display = "none";
+        document.getElementById("textOff").style.display = "block";
+    }
+
+    var labelDataLightRelayDate = [];
+    var numberOfLightOn = [];
+    var numberOfLightOff = [];
+
+    var currentNumberLightOn = 0;
+    var currentNumberLightOff = 0;
+
+    for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
+        var currentDate = labelDataLightRelay[i].substr(0, 10);
+        var currentStateOfSwitch = parseInt(chartDataLightRelay[i]);
+
+        if (currentDate != labelDataLightRelayDate[labelDataLightRelayDate.length - 1] && labelDataLightRelayDate.length != 0) {
+            numberOfLightOn.push(currentNumberLightOn);
+            numberOfLightOff.push(currentNumberLightOff);
+            currentNumberLightOff = 0;
+            currentNumberLightOn = 0;
+        }
+
+        if (currentStateOfSwitch == 1) {
+            currentNumberLightOn++;
+        }
+        else {
+            currentNumberLightOff++;
+        }
+
+        if (labelDataLightRelayDate.length == 0 || labelDataLightRelayDate[labelDataLightRelayDate.length-1] !== currentDate) {
+            labelDataLightRelayDate.push(currentDate);
+        }
+    }
+
+    light_chart.data.labels = labelDataLightRelayDate;
+    light_chart.data.datasets[0].data = numberOfLightOn;
+    light_chart.data.datasets[1].data = numberOfLightOff;
+
+    light_chart.update(); 
+}
+
+function reqListenerLight() {
+    var chartDataLight = [];
+
+    var res = JSON.parse(this.responseText);
+
+    for (var i = 0 ; i < res.length ; i++) {
+        chartDataLight.push(JSON.parse(res[i].value).data);
+    }
+
+    console.log('chart data light:', chartDataLight);
+
+    var currentLightValue = parseInt(chartDataLight[0]);
+    var currentLightRelayValue = null;
+
+    document.getElementById("textCurrentLightValue").style.display = "block";
+    document.getElementById("textCurrentLightValue").innerHTML = currentLightValue;
+
+    var currentRelayOn = document.getElementById("textOn").style.display;
+    var currentRelayOff = document.getElementById("textOff").style.display;
+
+    if (currentRelayOn === "block" && currentRelayOff === "none") {
+        currentLightRelayValue = 1;
+    }
+    else {
+        currentLightRelayValue = 0;
+    }
+
+    if (checkboxAutomatic.checked == true) {
+        if (currentLightValue >= 100 && currentLightRelayValue == 1) {
+            turnOff();
+        }
+        else if (currentLightValue < 100 && currentLightRelayValue == 0) {
+            turnOn();
+        }
+    }
+}
+
+function loadRelay() {
+    var lightRelayXmlHttpReq = new XMLHttpRequest();
+    lightRelayXmlHttpReq.onload = reqListenerRelay;
+    lightRelayXmlHttpReq.open("GET", relayUrl, true);
+    lightRelayXmlHttpReq.send();
+}
+
+function loadLight() {
+    var lightXmlHttpReq = new XMLHttpRequest();
+    lightXmlHttpReq.onload = reqListenerLight;
+    lightXmlHttpReq.open("GET", lightUrl, true);
+    lightXmlHttpReq.send();
+}
+
+function loader() {
+    loadRelay();
+    setTimeout(() => {
+        loadLight();
+    }, 1000);
+}
 
 function fetching() {
 
@@ -237,5 +365,7 @@ function fetching() {
 };
 
 repeat = setInterval(() => {
-    fetching();
-}, 5000);
+    loader();
+    //loadRelay();
+    //loadLight();
+}, intervalTime);
