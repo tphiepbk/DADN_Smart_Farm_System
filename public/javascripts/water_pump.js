@@ -12,14 +12,13 @@ var topic = "tphiepbk/feeds/bk-iot-water-pump-relay";
 var messageOn = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "1" , "unit" : ""});
 var messageOff = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "0" , "unit" : ""});
 
-var dataUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
-var feedsArray = [];
-var feedsArrayCreatedAt = [];
-
-var intervalId;
+var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
+
+var repeat = null;
 
 // send a message
 function turnOn() {
@@ -27,6 +26,8 @@ function turnOn() {
     document.getElementById("textOn").style.display = "block";
     document.getElementById("textOff").style.display = "none";
     client.send(topic, messageOn);
+
+    clearInterval(repeat);
 }
 
 function turnOff() {
@@ -34,12 +35,15 @@ function turnOff() {
     document.getElementById("textOn").style.display = "none";
     document.getElementById("textOff").style.display = "block";
     client.send(topic, messageOff);
+
+    clearInterval(repeat);
 }
 
 // called when the client connects
 function onConnect() {
     client.subscribe(topic);
     console.log("Connect successfully");
+    fetching();
 }
 
 // called when the client loses its connection
@@ -52,6 +56,10 @@ function onConnectionLost(responseObject) {
 // called when a message arrives
 function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
+
+    repeat = setInterval(() => {
+        fetching();
+    }, 5000);
 }
 
 console.log("Connecting...");
@@ -103,72 +111,131 @@ var water_pump_chart = new Chart(ctxWaterPump, {
     }
 });
 
-socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
-    var chartDataSoil = ele1;
-    var chartDataWaterPumpRelay = ele5;
-    var labelDataWaterPumpRelay = ele6;
+function fetching() {
 
-    console.log('chart data soil:', chartDataSoil);
-    console.log('chart data water pump relay:', chartDataWaterPumpRelay);
-    console.log('label data water pump relay:', labelDataWaterPumpRelay);
+    var waterPumpRelayXmlHttpReq = new XMLHttpRequest();
+    waterPumpRelayXmlHttpReq.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var chartDataWaterPumpRelay = [];
+            var labelDataWaterPumpRelay = [];
 
-    document.getElementById("textCurrentSoilValue").style.display = "block";
-    document.getElementById("textCurrentSoilValue").innerHTML = chartDataSoil[0];
+            var res = JSON.parse(this.responseText);
 
-    var labelDataWaterPumpRelayDate = [];
-    var numberOfWaterPumpOn = [];
-    var numberOfWaterPumpOff = [];
+            for (var i = 0 ; i < res.length ; i++) {
+                chartDataWaterPumpRelay.push(JSON.parse(res[i].value).data);
+                labelDataWaterPumpRelay.push(res[i].created_at);
+            }
 
-    var currentNumberWaterPumpOn = 0;
-    var currentNumberWaterPumpOff = 0;
+            console.log('chart data water pump relay:', chartDataWaterPumpRelay);
+            console.log('label data water pump relay:', labelDataWaterPumpRelay);
 
-    for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
-        var currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
-        var currentStateOfSwitch = parseInt(chartDataWaterPumpRelay[i]);
+            var currentStateOfWaterPump = chartDataWaterPumpRelay[0];
+            if (currentStateOfWaterPump == 1) {
+                document.getElementById("textOn").style.display = "block";
+                document.getElementById("textOff").style.display = "none";
+            }
+            else {
+                document.getElementById("textOn").style.display = "none";
+                document.getElementById("textOff").style.display = "block";
+            }
 
-        if (currentDate != labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length - 1] && labelDataWaterPumpRelayDate.length != 0) {
-            numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
-            numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
-            currentNumberWaterPumpOff = 0;
-            currentNumberWaterPumpOn = 0;
+            var labelDataWaterPumpRelayDate = [];
+            var numberOfWaterPumpOn = [];
+            var numberOfWaterPumpOff = [];
+
+            var currentNumberWaterPumpOn = 0;
+            var currentNumberWaterPumpOff = 0;
+
+            for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
+                var currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
+                var currentStateOfSwitch = parseInt(chartDataWaterPumpRelay[i]);
+
+                if (currentDate != labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length - 1] && labelDataWaterPumpRelayDate.length != 0) {
+                    numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
+                    numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
+                    currentNumberWaterPumpOff = 0;
+                    currentNumberWaterPumpOn = 0;
+                }
+
+                if (currentStateOfSwitch == 1) {
+                    currentNumberWaterPumpOn++;
+                }
+                else {
+                    currentNumberWaterPumpOff++;
+                }
+
+                if (labelDataWaterPumpRelayDate.length == 0 || labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length-1] !== currentDate) {
+                    labelDataWaterPumpRelayDate.push(currentDate);
+                }
+            }
+
+            /*
+            console.log(labelDataWaterPumpRelayDate);
+            console.log(numberOfWaterPumpOn);
+            console.log(numberOfWaterPumpOff);
+            */
+
+            water_pump_chart.data.labels = labelDataWaterPumpRelayDate;
+            water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn;
+            water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff;
+
+            water_pump_chart.update(); 
         }
+    };
 
-        if (currentStateOfSwitch == 1) {
-            currentNumberWaterPumpOn++;
+    waterPumpRelayXmlHttpReq.open("GET", relayUrl, false);
+    waterPumpRelayXmlHttpReq.send();
+
+    var soilXmlhttpReq = new XMLHttpRequest();
+    soilXmlhttpReq.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            
+            var chartDataSoil = [];
+
+            var res = JSON.parse(this.responseText);
+
+            for (var i = 0 ; i < res.length ; i++) {
+                chartDataSoil.push(JSON.parse(res[i].value).data);
+            }
+
+            console.log('chart data light:', chartDataSoil);
+
+            var currentSoilValue = parseInt(chartDataSoil[0]);
+            var currentWaterPumpRelayValue = null;
+
+            document.getElementById("textCurrentSoilValue").style.display = "block";
+            document.getElementById("textCurrentSoilValue").innerHTML = currentSoilValue;
+
+            var currentRelayOn = document.getElementById("textOn").style.display;
+            var currentRelayOff = document.getElementById("textOff").style.display;
+
+            if (currentRelayOn === "block" && currentRelayOff === "none") {
+                currentWaterPumpRelayValue = 1;
+            }
+            else {
+                currentWaterPumpRelayValue = 0;
+            }
+
+            /*
+            console.log(currentRelayOn);
+            console.log(currentRelayOff);
+            console.log(currentWaterPumpRelayValue);
+            */
+
+            if (checkboxAutomatic.checked == true) {
+                if (currentSoilValue >= 100 && currentWaterPumpRelayValue == 1) {
+                    turnOff();
+                }
+                else if (currentSoilValue < 100 && currentWaterPumpRelayValue == 0) {
+                    turnOn();
+                }
+            }
         }
-        else {
-            currentNumberWaterPumpOff++;
-        }
+    };
+    soilXmlhttpReq.open("GET", soilUrl, false);
+    soilXmlhttpReq.send();
+};
 
-        if (labelDataWaterPumpRelayDate.length == 0 || labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length-1] !== currentDate) {
-            labelDataWaterPumpRelayDate.push(currentDate);
-        }
-    }
-
-    console.log(labelDataWaterPumpRelayDate);
-    console.log(numberOfWaterPumpOn);
-    console.log(numberOfWaterPumpOff);
-
-    water_pump_chart.data.labels = labelDataWaterPumpRelayDate;
-    water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn;
-    water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff;
-
-    water_pump_chart.update();
-
-    var currentSoilValue = parseInt(chartDataSoil[0]);
-    var currentWaterPumpRelayValue =  parseInt(chartDataWaterPumpRelay[0]);
-
-    if (currentWaterPumpRelayValue == 0) {
-        document.getElementById("textOn").style.display = "none";
-        document.getElementById("textOff").style.display = "block";
-    }
-    else {
-        document.getElementById("textOn").style.display = "block";
-        document.getElementById("textOff").style.display = "none";
-    }
-
-    if (checkboxAutomatic.checked == true) {
-        if (currentSoilValue >= 100 && currentWaterPumpRelayValue == 1) turnOff();
-        else if (currentSoilValue < 100 && currentWaterPumpRelayValue == 0) turnOn();
-    }
-});
+repeat = setInterval(() => {
+    fetching();
+}, 5000);

@@ -16,15 +16,7 @@ var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay
 
 var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
 
-var feedsArray = [];
-var feedsArrayCreatedAt = [];
-
-var intervalId;
-
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
-
-var returnOkMsg = "OK";
-var returnNotOkMsg = "NOT OK";
 
 var repeat = null;
 
@@ -35,11 +27,6 @@ function turnOn() {
     document.getElementById("textOff").style.display = "none";
     client.send(topic, messageOn);
 
-    /*
-    setTimeout(() => {
-        socket.emit('return', returnOkMsg);
-    }, 5000);
-    */
     clearInterval(repeat);
 }
 
@@ -48,12 +35,6 @@ function turnOff() {
     document.getElementById("textOn").style.display = "none";
     document.getElementById("textOff").style.display = "block";
     client.send(topic, messageOff);
-
-    /*
-    setTimeout(() => {
-        socket.emit('return', returnOkMsg);
-    }, 5000);
-    */
 
     clearInterval(repeat);
 }
@@ -130,110 +111,6 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
-/*
-socket.on('send_data_first_time', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
-
-    //if (ele3.length == 0 || ele7.length == 0) {
-    //  socket.emit('return', returnNotOkMsg);
-    //}
-
-    var chartDataLight = ele3;
-    var chartDataLightRelay = ele7;
-    
-    var currentLightRelayValue =  parseInt(chartDataLightRelay[0]);
-
-    document.getElementById("textCurrentLightValue").style.display = "block";
-    document.getElementById("textCurrentLightValue").innerHTML = chartDataLight[0];
-
-    if (currentLightRelayValue == 0) {
-        document.getElementById("textOn").style.display = "none";
-        document.getElementById("textOff").style.display = "block";
-    }
-    else {
-        document.getElementById("textOn").style.display = "block";
-        document.getElementById("textOff").style.display = "none";
-    }
-
-    setTimeout(() => {
-        socket.emit('return', returnOkMsg);
-    }, 2000);
-});
-
-socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
-    var chartDataLight = ele3;
-    var chartDataLightRelay = ele7;
-    var labelDataLightRelay = ele8;
-
-    console.log('chart data light:', chartDataLight);
-    console.log('chart data light relay:', chartDataLightRelay);
-    console.log('label data light relay:', labelDataLightRelay);
-
-    document.getElementById("textCurrentLightValue").innerHTML = chartDataLight[0];
-
-    var labelDataLightRelayDate = [];
-    var numberOfLightOn = [];
-    var numberOfLightOff = [];
-
-    var currentNumberLightOn = 0;
-    var currentNumberLightOff = 0;
-
-    for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
-        var currentDate = labelDataLightRelay[i].substr(0, 10);
-        var currentStateOfSwitch = parseInt(chartDataLightRelay[i]);
-
-        if (currentDate != labelDataLightRelayDate[labelDataLightRelayDate.length - 1] && labelDataLightRelayDate.length != 0) {
-            numberOfLightOn.push(currentNumberLightOn);
-            numberOfLightOff.push(currentNumberLightOff);
-            currentNumberLightOff = 0;
-            currentNumberLightOn = 0;
-        }
-
-        if (currentStateOfSwitch == 1) {
-            currentNumberLightOn++;
-        }
-        else {
-            currentNumberLightOff++;
-        }
-
-        if (labelDataLightRelayDate.length == 0 || labelDataLightRelayDate[labelDataLightRelayDate.length-1] !== currentDate) {
-            labelDataLightRelayDate.push(currentDate);
-        }
-    }
-
-    console.log(labelDataLightRelayDate);
-    console.log(numberOfLightOn);
-    console.log(numberOfLightOff);
-
-    light_chart.data.labels = labelDataLightRelayDate;
-    light_chart.data.datasets[0].data = numberOfLightOn;
-    light_chart.data.datasets[1].data = numberOfLightOff;
-
-    light_chart.update();
-
-    var currentLightValue = parseInt(chartDataLight[0]);
-    var currentLightRelayValue =  parseInt(chartDataLightRelay[0]);
-
-    if (checkboxAutomatic.checked == true) {
-        if (currentLightValue >= 100 && currentLightRelayValue == 1) {
-            turnOff();
-        }
-        else if (currentLightValue < 100 && currentLightRelayValue == 0) {
-            turnOn();
-        }
-        else {
-            setTimeout(() => {
-                socket.emit('return', returnOkMsg);
-            }, 5000);
-        }
-    }
-    else {
-        setTimeout(() => {
-            socket.emit('return', returnOkMsg);
-        }, 5000);
-    }
-});
-*/
-
 function fetching() {
 
     var lightRelayXmlHttpReq = new XMLHttpRequest();
@@ -292,9 +169,11 @@ function fetching() {
                 }
             }
 
-            //console.log(labelDataLightRelayDate);
-            //console.log(numberOfLightOn);
-            //console.log(numberOfLightOff);
+            /*
+            console.log(labelDataLightRelayDate);
+            console.log(numberOfLightOn);
+            console.log(numberOfLightOff);
+            */
 
             light_chart.data.labels = labelDataLightRelayDate;
             light_chart.data.datasets[0].data = numberOfLightOn;
@@ -337,9 +216,11 @@ function fetching() {
                 currentLightRelayValue = 0;
             }
 
+            /*
             console.log(currentRelayOn);
             console.log(currentRelayOff);
             console.log(currentLightRelayValue);
+            */
 
             if (checkboxAutomatic.checked == true) {
                 if (currentLightValue >= 100 && currentLightRelayValue == 1) {
