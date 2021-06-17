@@ -7,57 +7,8 @@
     <body class="c-app">
 
         <div class="c-sidebar c-sidebar-dark c-sidebar-show c-sidebar-fixed">
-
-            <div class="c-sidebar-brand d-lg-down-none">
-                <img src="logo_bk.png" alt="logo_bk" style="width:150px;height:150px;">
-            </div>
-
-            <ul class="c-sidebar-nav">
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/">
-                    <i class="c-sidebar-nav-icon cil-speedometer"></i> Dashboard
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Statistic</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-bolt"></i> Light System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-drop"></i> Water Pump System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Utilities</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/notification">
-                    <i class="c-sidebar-nav-icon cil-layers"></i> Notification
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light">
-                    <i class="c-sidebar-nav-icon cil-lightbulb"></i> Light
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump">
-                    <i class="c-sidebar-nav-icon cil-shower"></i> Water Pump
-                    </a>
-                </li>
-                <li class="c-sidebar-nav-item mt-auto">
-                    <a class="c-sidebar-nav-link c-sidebar-nav-link-danger" href="/logout">
-                    <i class="c-sidebar-nav-icon cil-power-standby"></i>Logout</a>
-                </li>
-            </ul>
-            </div>
+            <%- include('partials/sidebar')%>
+        </div>
 
         <div class="c-wrapper">
 
@@ -100,9 +51,11 @@
         </div>
 
         <!-- Optional JavaScript -->
-        <!-- Popper.js first, then CoreUI JS -->
+        <!-- Popper.js first, then CoreUI JS
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <script src="https://unpkg.com/@coreui/coreui/dist/js/coreui.min.js"></script>
+        -->
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="light_graph.js"></script>
     </body>
