@@ -384,6 +384,7 @@ getWaterPumpRelayData();
 
 io.on('connection', socket => {
     console.log('Connected to socket.io successfully');
+    
 
     /*
     setInterval(function() {

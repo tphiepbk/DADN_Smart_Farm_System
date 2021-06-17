@@ -212,10 +212,20 @@ function reqListenerSoil() {
 
     if (checkboxAutomatic.checked == true) {
         if (currentSoilValue >= 100 && currentWaterPumpRelayValue == 1) {
+            highSoilAlertTrigger();
             turnOff();
         }
         else if (currentSoilValue < 100 && currentWaterPumpRelayValue == 0) {
+            lowSoilAlertTrigger();
             turnOn();
+        }
+    }
+    else {
+        if (currentSoilValue >= 100 && currentWaterPumpRelayValue == 1) {
+            highSoilAlertTrigger();
+        }
+        else if (currentSoilValue < 100 && currentWaterPumpRelayValue == 0) {
+            lowSoilAlertTrigger();
         }
     }
 }
@@ -244,3 +254,8 @@ function loader() {
 repeat = setInterval(() => {
     loader();
 }, intervalTime);
+
+lowLightAlertHide();
+highLightAlertHide();
+lowSoilAlertHide();
+highSoilAlertHide();
