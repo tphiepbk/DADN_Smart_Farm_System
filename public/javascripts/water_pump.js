@@ -169,6 +169,8 @@ function reqListenerRelay() {
             labelDataWaterPumpRelayDate.push(currentDate);
         }
     }
+    numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
+    numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
 
     water_pump_chart.data.labels = labelDataWaterPumpRelayDate;
     water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn;

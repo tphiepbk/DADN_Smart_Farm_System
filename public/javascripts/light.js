@@ -173,6 +173,8 @@ function reqListenerRelay() {
             labelDataLightRelayDate.push(currentDate);
         }
     }
+    numberOfLightOn.push(currentNumberLightOn);
+    numberOfLightOff.push(currentNumberLightOff);
 
     light_chart.data.labels = labelDataLightRelayDate;
     light_chart.data.datasets[0].data = numberOfLightOn;
