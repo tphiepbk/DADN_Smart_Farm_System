@@ -12,6 +12,8 @@
 
         <div class="c-wrapper">
 
+            <%- include('partials/alert')%>
+
             <header>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
@@ -26,6 +28,7 @@
             </header>
 
             <div class="c-body">
+
                 <main class="c-main">
         
                     <div class="container-fluid">
@@ -43,6 +46,9 @@
                             <div class="card-body">
 
                                 <canvas id="light_chart"></canvas>
+
+                                <button type="button" onclick="alertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> Primary</button>
+
                                 <p class="card-text">Representing state of light</p>
 
                             </div>
@@ -55,6 +61,7 @@
             <footer class="c-footer">
                 <%- include('partials/footer')%>
             </footer>
+
         </div>
 
         <!-- Optional JavaScript -->

@@ -147,3 +147,13 @@ socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) 
     soil_chart.data.datasets[0].data = chartdataSoil;
     soil_chart.update();
 });
+
+$('#alert').hide();
+
+function alertTrigger() {
+    $('#alert').show();
+}
+
+function alertHide() {
+    $('#alert').hide();
+}
