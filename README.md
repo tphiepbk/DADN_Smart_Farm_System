@@ -16,7 +16,7 @@
 ## About
 
 ***Powered by FWB Team***:
-* Thai Phuc Hiep - [tphiepbk](https://github.com/tphiepbk) (main coder) : based app, UI, server, light system and water pump system utilities, statistic feature
+* Thai Phuc Hiep - [tphiepbk](https://github.com/tphiepbk) (main coder) : based app, UI, server, light system and water pump system utilities, statistic feature, notification feature
 * Lam Thanh Huy - [lamhuy2214](https://github.com/lamhuy2214) : Login feature
 * Le Chung Hoang - [HoangLC19](https://github.com/HoangLC19) : Notification feature
 * Nguyen Trong Hoang - [tronghoangbk](https://github.com/tronghoangbk) : Notification feature
