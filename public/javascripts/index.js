@@ -181,6 +181,10 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
+var sortedLightByDay = true;
+var sortedLightByMonth = false;
+var sortedLightByYear = false;
+
 function reqListenerLight() {
     var chartDataLight = [];
     var labelDataLight = [];
@@ -207,7 +211,18 @@ function reqListenerLight() {
     var sumLightValueOfDay = 0;
 
     for (var i = 0 ; i < labelDataLight.length ; i++) {
-        var currentDate = labelDataLight[i].substr(0, 10);
+
+        var currentDate = null;
+        if (sortedLightByDay == true) {
+            currentDate = labelDataLight[i].substr(0, 10);
+        }
+        else if (sortedLightByMonth == true) {
+            currentDate = labelDataLight[i].substr(0, 7);
+        }
+        else {
+            currentDate = labelDataLight[i].substr(0, 4);
+        }
+
         var currentLightValue = parseInt(chartDataLight[i]);
 
         if (currentDate != labelDataLightDate[labelDataLightDate.length - 1] && labelDataLightDate.length != 0) {
@@ -248,6 +263,10 @@ function reqListenerLight() {
     light_chart.update(); 
 }
 
+var sortedSoilByDay = true;
+var sortedSoilByMonth = false;
+var sortedSoilByYear = false;
+
 function reqListenerSoil() {
     var chartDataSoil = [];
     var labelDataSoil = [];
@@ -274,7 +293,18 @@ function reqListenerSoil() {
     var sumSoilValueOfDay = 0;
 
     for (var i = 0 ; i < labelDataSoil.length ; i++) {
-        var currentDate = labelDataSoil[i].substr(0, 10);
+
+        var currentDate = null;
+        if (sortedSoilByDay == true) {
+            currentDate = labelDataSoil[i].substr(0, 10);
+        }
+        else if (sortedSoilByMonth == true) {
+            currentDate = labelDataSoil[i].substr(0, 7);
+        }
+        else {
+            currentDate = labelDataSoil[i].substr(0, 4);
+        };
+
         var currentSoilValue = parseInt(chartDataSoil[i]);
 
         if (currentDate != labelDataSoilDate[labelDataSoilDate.length - 1] && labelDataSoilDate.length != 0) {
@@ -337,6 +367,43 @@ function loader() {
     */
     loadSoil();
     loadLight();
+}
+
+function sortStyle(type, typeOfSort) {
+    if (type == "light") {
+        if (typeOfSort == "day") {
+            sortedLightByDay = true;
+            sortedLightByMonth = false;
+            sortedLightByYear = false;
+        }
+        else if (typeOfSort == "month") {
+            sortedLightByDay = false;
+            sortedLightByMonth = true;
+            sortedLightByYear = false;
+        }
+        else {
+            sortedLightByDay = false;
+            sortedLightByMonth = false;
+            sortedLightByYear = true;
+        }
+    }
+    else {
+        if (typeOfSort == "day") {
+            sortedSoilByDay = true;
+            sortedSoilByMonth = false;
+            sortedSoilByYear = false;
+        }
+        else if (typeOfSort == "month") {
+            sortedSoilByDay = false;
+            sortedSoilByMonth = true;
+            sortedSoilByYear = false;
+        }
+        else {
+            sortedSoilByDay = false;
+            sortedSoilByMonth = false;
+            sortedSoilByYear = true;
+        }
+    }
 }
 
 repeat = setInterval(() => {

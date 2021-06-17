@@ -36,8 +36,14 @@
                         <div class="card">
                             <div class="card-body">
 
-                                <canvas id="soil_chart"></canvas>
-                                <p class="card-text">Representing state of soil</p>
+                                <button type="button" onclick="sortStyle('light', 'day')" class="btn btn-twitter"><span class="cil-contrast btn-icon mr-2"></span> Day</button>
+                                <button type="button" onclick="sortStyle('light', 'month')" class="btn btn-vimeo"><span class="cil-contrast btn-icon mr-2"></span> Month</button>
+                                <button type="button" onclick="sortStyle('light', 'year')" class="btn btn-xing"><span class="cil-contrast btn-icon mr-2"></span> Year</button>
+
+                                <canvas id="light_chart"></canvas>
+
+                                <hr>
+                                <p class="card-text"><strong>State of light</strong></p>
 
                             </div>
                         </div>
@@ -45,14 +51,14 @@
                         <div class="card">
                             <div class="card-body">
 
-                                <canvas id="light_chart"></canvas>
+                                <button type="button" onclick="sortStyle('soil', 'day')" class="btn btn-twitter"><span class="cil-contrast btn-icon mr-2"></span> Day</button>
+                                <button type="button" onclick="sortStyle('soil', 'month')" class="btn btn-vimeo"><span class="cil-contrast btn-icon mr-2"></span> Month</button>
+                                <button type="button" onclick="sortStyle('soil', 'year')" class="btn btn-xing"><span class="cil-contrast btn-icon mr-2"></span> Year</button>
 
-                                <button type="button" onclick="highSoilAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> high soil</button>
-                                <button type="button" onclick="lowSoilAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> low soil</button>
-                                <button type="button" onclick="highLightAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> high light</button>
-                                <button type="button" onclick="lowLightAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> low light</button>
+                                <canvas id="soil_chart"></canvas>
 
-                                <p class="card-text">Representing state of light</p>
+                                <hr>
+                                <p class="card-text"><strong>State of soil</strong></p>
 
                             </div>
                         </div>
