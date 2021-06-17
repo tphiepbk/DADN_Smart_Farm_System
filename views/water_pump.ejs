@@ -4,64 +4,15 @@
         <%- include('partials/head')%>
     </head>
 
-    <body class="c-app" onload="init()">
+    <body class="c-app">
 
-        <div class="c-sidebar c-sidebar-dark c-sidebar-show">
-
-            <div class="c-sidebar-brand d-lg-down-none">
-                <img src="logo_bk.png" alt="logo_bk" style="width:150px;height:150px;">
-            </div>
-
-            <ul class="c-sidebar-nav">
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/">
-                    <i class="c-sidebar-nav-icon cil-speedometer"></i> Dashboard
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Statistic</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-bolt"></i> Light System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-drop"></i> Water Pump System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Utilities</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/notification">
-                    <i class="c-sidebar-nav-icon cil-layers"></i> Notification
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/database">
-                    <i class="c-sidebar-nav-icon cil-storage"></i> Database
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light">
-                    <i class="c-sidebar-nav-icon cil-lightbulb"></i> Light
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump">
-                    <i class="c-sidebar-nav-icon cil-shower"></i> Water Pump
-                    </a>
-                </li>
-            </ul>
-            </div>
+        <div class="c-sidebar c-sidebar-dark c-sidebar-show c-sidebar-fixed">
+            <%- include('partials/sidebar')%>
+        </div>
 
         <div class="c-wrapper">
+
+            <%- include('partials/alert')%>
 
             <header>
                 <div class="container-fluid">
@@ -80,54 +31,80 @@
                 <main class="c-main">
                     <div class="container-fluid">
 
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card-deck">
 
-                                <p class="card-text">State of water pump system</p>
+                            <div class="card">
+                                <div class="card-header"><strong>Current State</strong></div>
 
-                                <label class="c-switch c-switch-pill c-switch-primary">
-                                    <input type="checkbox" class="c-switch-input" checked>
-                                    <span class="c-switch-slider"></span>
-                                </label>
+                                <div class="card-body">
 
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-info b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Water pump</small><br>
+                                                <strong id="textOn" class="h4">On</strong>
+                                                <strong id="textOff" class="h4">Off</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-danger b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Soil sensor</small><br>
+                                                <strong id="textCurrentSoilValue" class="h4">22,643</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
+
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <p><strong class="card-text">Automatic mode</strong></p>
+
+                                    <label class="c-switch c-switch-pill c-switch-primary">
+                                        <input type="checkbox" class="c-switch-input" checked>
+                                        <span class="c-switch-slider"></span>
+                                    </label>
+
+                                    <hr>
+
+                                    <p class="card-text">Get the data of sensors and turn on/off water pump system automatically</p>
+
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <p><strong class="card-text">Switch</strong></p>
+
+                                    <button type="button" onclick="turnOn()" class="btn btn-success"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
+                                    <button type="button" onclick="turnOff()" class="btn btn-danger"><span class="cil-power-standby btn-icon mr-2"></span> Turn off</button>
+
+                                    <hr>
+
+                                    <p class="card-text">Turn on/off the water pump system manually</p>
+                                </div>
+                            </div>
+
                         </div>
 
+                    </div>
+
+                    <br>
+
+                    <div class="container-fluid">
                         <div class="card">
                             <div class="card-body">
-
-                                <p class="card-text">Turn on/off the water pump system</p>
-                                <button type="button" onclick="turnOn()" class="btn btn-success"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
-                                <button type="button" onclick="turnOff()" class="btn btn-danger"><span class="cil-power-standby btn-icon mr-2"></span> Turn off</button>
+                                <div class="chart-container">
+                                    <canvas id="water_pump_chart" height = "10rem" width = "20rem"></canvas>
+                                </div>
+                                <hr>
+                                <p class="card-text"><strong>State of water pump system per day</strong></p>
                             </div>
                         </div>
-
-                        <div class="card">
-                            <div class="card-body">
-
-                                <p class="card-text">Recent feeds</p>
-                                <button type="button" onclick="refreshTable()" class="btn btn-reddit"><span class="cil-reload btn-icon mr-2"></span> Refresh</button>
-                                <br><br>
-
-                                <table class="table table-borderless table-striped" id="recent-feeds-table">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Id</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Data</th>
-                                            <th scope="col">Unit</th>
-                                            <th scope="col">Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- will be added in runtime-->
-                                    </tbody>
-                                </table>
-
-                            </div>
-                        </div>
-
                     </div>
                 </main>
             </div>
@@ -138,11 +115,12 @@
         </div>
 
         <!-- Optional JavaScript -->
-        <!-- Popper.js first, then CoreUI JS -->
+        <!-- Popper.js first, then CoreUI JS
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <script src="https://unpkg.com/@coreui/coreui/dist/js/coreui.min.js"></script>
+        -->
 
         <script src="/socket.io/socket.io.js"></script>
-        <script src="test_water_pump.js"></script>
+        <script src="water_pump.js"></script>
     </body>
 </html>

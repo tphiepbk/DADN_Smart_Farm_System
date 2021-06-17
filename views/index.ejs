@@ -6,63 +6,13 @@
 
     <body class="c-app">
 
-        <div class="c-sidebar c-sidebar-dark c-sidebar-show">
-
-            <div class="c-sidebar-brand d-lg-down-none">
-                <img src="logo_bk.png" alt="logo_bk" style="width:150px;height:150px;">
-            </div>
-
-            <ul class="c-sidebar-nav">
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/">
-                    <i class="c-sidebar-nav-icon cil-speedometer"></i> Dashboard
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Statistic</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-bolt"></i> Light System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump_system_statistic">
-                    <i class="c-sidebar-nav-icon cil-drop"></i> Water Pump System
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-title">Utilities</li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/notification">
-                    <i class="c-sidebar-nav-icon cil-layers"></i> Notification
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/database">
-                    <i class="c-sidebar-nav-icon cil-storage"></i> Database
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/light">
-                    <i class="c-sidebar-nav-icon cil-lightbulb"></i> Light
-                    </a>
-                </li>
-
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link" href="/water_pump">
-                    <i class="c-sidebar-nav-icon cil-shower"></i> Water Pump
-                    </a>
-                </li>
-
-            </ul>
-            </div>
+        <div class="c-sidebar c-sidebar-dark c-sidebar-show c-sidebar-fixed">
+            <%- include('partials/sidebar')%>
+        </div>
 
         <div class="c-wrapper">
+
+            <%- include('partials/alert')%>
 
             <header>
                 <div class="container-fluid">
@@ -78,6 +28,7 @@
             </header>
 
             <div class="c-body">
+
                 <main class="c-main">
         
                     <div class="container-fluid">
@@ -95,6 +46,12 @@
                             <div class="card-body">
 
                                 <canvas id="light_chart"></canvas>
+
+                                <button type="button" onclick="highSoilAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> high soil</button>
+                                <button type="button" onclick="lowSoilAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> low soil</button>
+                                <button type="button" onclick="highLightAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> high light</button>
+                                <button type="button" onclick="lowLightAlertTrigger()" class="btn btn-primary"><span class="cil-contrast btn-icon mr-2"></span> low light</button>
+
                                 <p class="card-text">Representing state of light</p>
 
                             </div>
@@ -107,12 +64,14 @@
             <footer class="c-footer">
                 <%- include('partials/footer')%>
             </footer>
+
         </div>
 
         <!-- Optional JavaScript -->
-        <!-- Popper.js first, then CoreUI JS -->
+        <!-- Popper.js first, then CoreUI JS
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <script src="https://unpkg.com/@coreui/coreui/dist/js/coreui.min.js"></script>
+        -->
 
         <!--
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
@@ -120,6 +79,6 @@
         <script src="index.js"></script>
         -->
         <script src="/socket.io/socket.io.js"></script>
-        <script src="test_index.js"></script>
+        <script src="index.js"></script>
     </body>
 </html>
