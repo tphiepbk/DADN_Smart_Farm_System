@@ -120,6 +120,10 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
+var sortedLightByDay = true;
+var sortedLightByMonth = false;
+var sortedLightByYear = false;
+
 function reqListenerRelay() {
     var chartDataLightRelay = [];
     var labelDataLightRelay = [];
@@ -152,7 +156,18 @@ function reqListenerRelay() {
     var currentNumberLightOff = 0;
 
     for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
-        var currentDate = labelDataLightRelay[i].substr(0, 10);
+
+        var currentDate = null;
+        if (sortedLightByDay == true) {
+            currentDate = labelDataLightRelay[i].substr(0, 10);
+        }
+        else if (sortedLightByMonth == true) {
+            currentDate = labelDataLightRelay[i].substr(0, 7);
+        }
+        else {
+            currentDate = labelDataLightRelay[i].substr(0, 4);
+        }
+
         var currentStateOfSwitch = parseInt(chartDataLightRelay[i]);
 
         if (currentDate != labelDataLightRelayDate[labelDataLightRelayDate.length - 1] && labelDataLightRelayDate.length != 0) {
@@ -249,6 +264,24 @@ function loader() {
     setTimeout(() => {
         loadLight();
     }, 1000);
+}
+
+function sortStyle(typeOfSort) {
+    if (typeOfSort == "day") {
+        sortedLightByDay = true;
+        sortedLightByMonth = false;
+        sortedLightByYear = false;
+    }
+    else if (typeOfSort == "month") {
+        sortedLightByDay = false;
+        sortedLightByMonth = true;
+        sortedLightByYear = false;
+    }
+    else {
+        sortedLightByDay = false;
+        sortedLightByMonth = false;
+        sortedLightByYear = true;
+    }
 }
 
 repeat = setInterval(() => {

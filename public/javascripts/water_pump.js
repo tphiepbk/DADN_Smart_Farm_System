@@ -116,6 +116,10 @@ var water_pump_chart = new Chart(ctxWaterPump, {
     }
 });
 
+var sortedByDay = true;
+var sortedByMonth = false;
+var sortedByYear = false
+
 function reqListenerRelay() {
     var chartDataWaterPumpRelay = [];
     var labelDataWaterPumpRelay = [];
@@ -148,7 +152,18 @@ function reqListenerRelay() {
     var currentNumberWaterPumpOff = 0;
 
     for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
-        var currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
+
+        var currentDate = null;
+        if (sortedByDay == true) {
+            currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
+        }
+        else if (sortedByMonth == true) {
+            currentDate = labelDataWaterPumpRelay[i].substr(0, 7);
+        }
+        else {
+            currentDate = labelDataWaterPumpRelay[i].substr(0, 4);
+        }
+
         var currentStateOfSwitch = parseInt(chartDataWaterPumpRelay[i]);
 
         if (currentDate != labelDataWaterPumpRelayDate[labelDataWaterPumpRelayDate.length - 1] && labelDataWaterPumpRelayDate.length != 0) {
@@ -251,6 +266,24 @@ function loader() {
     setTimeout(() => {
         loadSoil();
     }, 1000);
+}
+
+function sortStyle(typeOfSort) {
+    if (typeOfSort == "day") {
+        sortedByDay = true;
+        sortedByMonth = false;
+        sortedByYear = false;
+    }
+    else if (typeOfSort == "month") {
+        sortedByDay = false;
+        sortedByMonth = true;
+        sortedByYear = false;
+    }
+    else {
+        sortedByDay = false;
+        sortedByMonth = false;
+        sortedByYear = true;
+    }
 }
 
 repeat = setInterval(() => {
