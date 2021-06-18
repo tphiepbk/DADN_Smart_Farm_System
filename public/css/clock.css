@@ -1,0 +1,15 @@
+@import 'https://fonts.googleapis.com/css?family=Nova+Mono|Eczar';
+
+#time {
+    font-family: 'Nova Mono', monospace;
+    font-size: 2em;
+    text-align: center;
+    text-shadow: 0px 0px 20px;
+}
+
+#date {
+    font-family: 'Eczar', serif;
+    font-size: 1.25em;
+    text-align: center;
+    text-shadow: 0px 0px 20px blue;
+}

@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <%- include('partials/head')%>
+        <link rel="stylesheet" href="css/clock.css">
     </head>
 
     <body class="c-app">
@@ -33,12 +34,46 @@
         
                     <div class="container-fluid">
 
+                        <div class="card-deck">
+
+                            <div class="card bg-dark text-white">
+                                <div class="card-header"><strong>Date and Time</strong></div>
+
+                                <div class="card-body">
+                                    <div id="clock-container">
+                                        <p id="time"></p>
+                                        <p id="date"></p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div id="text-current-light-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div>Current light value</div>
+                                    <img src="barchart.png" alt="barchart" style="height: 5rem; width: 100%;">
+                                </div>
+                            </div>
+
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div id="text-current-soil-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div>Current soil value</div>
+                                    <img src="areachart.png" alt="areachart" style="height: 5rem; width: 100%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
                         <div class="card">
                             <div class="card-body">
 
-                                <button type="button" onclick="sortStyle('light', 'day')" class="btn btn-twitter"><span class="cil-contrast btn-icon mr-2"></span> Day</button>
-                                <button type="button" onclick="sortStyle('light', 'month')" class="btn btn-vimeo"><span class="cil-contrast btn-icon mr-2"></span> Month</button>
-                                <button type="button" onclick="sortStyle('light', 'year')" class="btn btn-xing"><span class="cil-contrast btn-icon mr-2"></span> Year</button>
+                                <button type="button" onclick="sortStyle('light', 'day')" class="btn btn-twitter"><span class="cil-calendar btn-icon mr-2"></span> Day</button>
+                                <button type="button" onclick="sortStyle('light', 'month')" class="btn btn-vimeo"><span class="cil-calendar btn-icon mr-2"></span> Month</button>
+                                <button type="button" onclick="sortStyle('light', 'year')" class="btn btn-xing"><span class="cil-calendar btn-icon mr-2"></span> Year</button>
 
                                 <canvas id="light_chart"></canvas>
 
@@ -51,9 +86,9 @@
                         <div class="card">
                             <div class="card-body">
 
-                                <button type="button" onclick="sortStyle('soil', 'day')" class="btn btn-twitter"><span class="cil-contrast btn-icon mr-2"></span> Day</button>
-                                <button type="button" onclick="sortStyle('soil', 'month')" class="btn btn-vimeo"><span class="cil-contrast btn-icon mr-2"></span> Month</button>
-                                <button type="button" onclick="sortStyle('soil', 'year')" class="btn btn-xing"><span class="cil-contrast btn-icon mr-2"></span> Year</button>
+                                <button type="button" onclick="sortStyle('soil', 'day')" class="btn btn-twitter"><span class="cil-calendar btn-icon mr-2"></span> Day</button>
+                                <button type="button" onclick="sortStyle('soil', 'month')" class="btn btn-vimeo"><span class="cil-calendar btn-icon mr-2"></span> Month</button>
+                                <button type="button" onclick="sortStyle('soil', 'year')" class="btn btn-xing"><span class="cil-calendar btn-icon mr-2"></span> Year</button>
 
                                 <canvas id="soil_chart"></canvas>
 

@@ -261,6 +261,8 @@ function reqListenerLight() {
     light_chart.data.datasets[3].data = chartDataLightDate_minValue;
 
     light_chart.update(); 
+
+    document.getElementById("text-current-light-value").innerHTML = chartDataLightDate_latestValue[0];
 }
 
 var sortedSoilByDay = true;
@@ -343,6 +345,8 @@ function reqListenerSoil() {
     soil_chart.data.datasets[3].data = chartDataSoilDate_minValue;
 
     soil_chart.update(); 
+
+    document.getElementById("text-current-soil-value").innerHTML = chartDataSoilDate_latestValue[0];
 }
 
 function loadSoil() {
@@ -417,6 +421,12 @@ highLightAlertHide();
 lowSoilAlertHide();
 highSoilAlertHide();
 
+window.setInterval(updateClock, 1000);
+function updateClock() {
+    var d = new Date();
+    document.getElementById("time").innerHTML = d.toLocaleTimeString();
+    document.getElementById("date").innerHTML = d.toLocaleDateString();
+}
 /*
 socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
     chartdataSoil = ele1;
