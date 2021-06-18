@@ -20,7 +20,17 @@
 ## About
 
 ***Powered by FWB Team***:
-* Thai Phuc Hiep - [tphiepbk](https://github.com/tphiepbk) (main coder) : base app, UI, server, send data to adafruit, receive data from adafruit, fetch data and turn on/off light system and water pump system automatically, statistic feature, notification feature
+* Thai Phuc Hiep - [tphiepbk](https://github.com/tphiepbk) (main coder) : 
+	+ Base app
+	+ UI
+	+ Server
+	+ Send data to adafruit
+	+ Receive data from adafruit
+	+ Fetch data and turn on/off light system and water pump system automatically
+	+ Statistic feature
+	+ Notification feature
+	+ Final report
+
 * Lam Thanh Huy - [lamhuy2214](https://github.com/lamhuy2214) : Login feature
 * Le Chung Hoang - [HoangLC19](https://github.com/HoangLC19) : Notification feature
 * Nguyen Trong Hoang - [tronghoangbk](https://github.com/tronghoangbk) : Notification feature
