@@ -228,10 +228,24 @@ function reqListenerLight() {
     console.log('chart data light date latest value:', chartDataLightDate_latestValue);
     console.log('label data light date:', labelDataLightDate);
 
-    light_chart.data.labels = labelDataLightDate;
-    light_chart.data.datasets[0].data = chartDataLightDate_maxValue;
-    light_chart.data.datasets[1].data = chartDataLightDate_averageValue;
-    light_chart.data.datasets[2].data = chartDataLightDate_minValue;
+    if (sortedLightByDay == true) {
+        light_chart.data.labels = labelDataLightDate.splice(0, 7);
+        light_chart.data.datasets[0].data = chartDataLightDate_maxValue.splice(0, 7);
+        light_chart.data.datasets[1].data = chartDataLightDate_averageValue.splice(0, 7);
+        light_chart.data.datasets[2].data = chartDataLightDate_minValue.splice(0, 7);
+    }
+    else if (sortedLightByMonth == true) {
+        light_chart.data.labels = labelDataLightDate.splice(0, 12);
+        light_chart.data.datasets[0].data = chartDataLightDate_maxValue.splice(0, 12);
+        light_chart.data.datasets[1].data = chartDataLightDate_averageValue.splice(0, 12);
+        light_chart.data.datasets[2].data = chartDataLightDate_minValue.splice(0, 12);
+    }
+    else {
+        light_chart.data.labels = labelDataLightDate.splice(0, 5);
+        light_chart.data.datasets[0].data = chartDataLightDate_maxValue.splice(0, 5);
+        light_chart.data.datasets[1].data = chartDataLightDate_averageValue.splice(0, 5);
+        light_chart.data.datasets[2].data = chartDataLightDate_minValue.splice(0, 5);
+    }
 
     light_chart.update(); 
 
@@ -311,10 +325,24 @@ function reqListenerSoil() {
     console.log('chart data Soil date latest value:', chartDataSoilDate_latestValue);
     console.log('label data Soil date:', labelDataSoilDate);
 
-    soil_chart.data.labels = labelDataSoilDate;
-    soil_chart.data.datasets[0].data = chartDataSoilDate_maxValue;
-    soil_chart.data.datasets[1].data = chartDataSoilDate_averageValue;
-    soil_chart.data.datasets[2].data = chartDataSoilDate_minValue;
+    if (sortedSoilByDay == true) {
+        soil_chart.data.labels = labelDataSoilDate.slice(0, 7);
+        soil_chart.data.datasets[0].data = chartDataSoilDate_maxValue.slice(0, 7);
+        soil_chart.data.datasets[1].data = chartDataSoilDate_averageValue.slice(0, 7);
+        soil_chart.data.datasets[2].data = chartDataSoilDate_minValue.slice(0, 7);
+    }
+    else if (sortedLightByMonth == true) {
+        soil_chart.data.labels = labelDataSoilDate.slice(0, 12);
+        soil_chart.data.datasets[0].data = chartDataSoilDate_maxValue.slice(0, 12);
+        soil_chart.data.datasets[1].data = chartDataSoilDate_averageValue.slice(0, 12);
+        soil_chart.data.datasets[2].data = chartDataSoilDate_minValue.slice(0, 12);
+    }
+    else {
+        soil_chart.data.labels = labelDataSoilDate.slice(0, 5);
+        soil_chart.data.datasets[0].data = chartDataSoilDate_maxValue.slice(0, 5);
+        soil_chart.data.datasets[1].data = chartDataSoilDate_averageValue.slice(0, 5);
+        soil_chart.data.datasets[2].data = chartDataSoilDate_minValue.slice(0, 5);
+    }
 
     soil_chart.update(); 
 

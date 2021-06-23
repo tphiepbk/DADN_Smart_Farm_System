@@ -32,7 +32,7 @@ function manualSwitch() {
 }
 
 var repeat = null;
-var intervalTime = 5000;
+var intervalTime = 3000;
 
 // send a message
 function turnOn() {
@@ -204,9 +204,21 @@ function reqListenerRelay() {
     numberOfLightOn.push(currentNumberLightOn);
     numberOfLightOff.push(currentNumberLightOff);
 
-    light_chart.data.labels = labelDataLightRelayDate;
-    light_chart.data.datasets[0].data = numberOfLightOn;
-    light_chart.data.datasets[1].data = numberOfLightOff;
+    if (sortedLightByDay == true) {
+        light_chart.data.labels = labelDataLightRelayDate.slice(0, 7);
+        light_chart.data.datasets[0].data = numberOfLightOn.slice(0, 7);
+        light_chart.data.datasets[1].data = numberOfLightOff.slice(0, 7);
+    }
+    else if (sortedLightByMonth == true) {
+        light_chart.data.labels = labelDataLightRelayDate.slice(0, 12);
+        light_chart.data.datasets[0].data = numberOfLightOn.slice(0, 12);
+        light_chart.data.datasets[1].data = numberOfLightOff.slice(0, 12);
+    }
+    else {
+        light_chart.data.labels = labelDataLightRelayDate.slice(0, 5);
+        light_chart.data.datasets[0].data = numberOfLightOn.slice(0, 5);
+        light_chart.data.datasets[1].data = numberOfLightOff.slice(0, 5);
+    }
 
     light_chart.update(); 
 }

@@ -32,7 +32,7 @@ function manualSwitch() {
 }
 
 var repeat = null;
-var intervalTime = 5000;
+var intervalTime = 3000;
 
 // send a message
 function turnOn() {
@@ -200,9 +200,21 @@ function reqListenerRelay() {
     numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
     numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
 
-    water_pump_chart.data.labels = labelDataWaterPumpRelayDate;
-    water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn;
-    water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff;
+    if (sortedByDay == true) {
+        water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 7);
+        water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 7);
+        water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 7);
+    }
+    else if (sortedByMonth == true) {
+        water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 12);
+        water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 12);
+        water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 12);
+    }
+    else {
+        water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 5);
+        water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 5);
+        water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 5);
+    }
 
     water_pump_chart.update(); 
 }
