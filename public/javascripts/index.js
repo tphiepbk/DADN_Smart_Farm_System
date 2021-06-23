@@ -71,19 +71,6 @@ var soil_chart = new Chart(ctxSoil, {
         labels: [],
         datasets: [
             {
-                type: 'line',
-                label: 'Latest',
-                pointRadius: 4,
-                data: [],
-                backgroundColor: [
-                    'rgb(174, 24, 248)'
-                ],
-                borderColor: [
-                    'rgb(174, 24, 248)'
-                ],
-                borderWidth: 4
-            },
-            {
                 type: 'bar',
                 label: 'Max',
                 data: [],
@@ -128,19 +115,6 @@ var light_chart = new Chart(ctxLight, {
     data: {
         labels: [],
         datasets: [
-            {
-                type: 'line',
-                label: 'Latest',
-                pointRadius: 4,
-                data: [],
-                backgroundColor: [
-                    'rgb(174, 24, 248)'
-                ],
-                borderColor: [
-                    'rgb(174, 24, 248)'
-                ],
-                borderWidth: 4
-            },
             {
                 type: 'bar',
                 label: 'Max',
@@ -255,10 +229,9 @@ function reqListenerLight() {
     console.log('label data light date:', labelDataLightDate);
 
     light_chart.data.labels = labelDataLightDate;
-    light_chart.data.datasets[0].data = chartDataLightDate_latestValue;
-    light_chart.data.datasets[1].data = chartDataLightDate_maxValue;
-    light_chart.data.datasets[2].data = chartDataLightDate_averageValue;
-    light_chart.data.datasets[3].data = chartDataLightDate_minValue;
+    light_chart.data.datasets[0].data = chartDataLightDate_maxValue;
+    light_chart.data.datasets[1].data = chartDataLightDate_averageValue;
+    light_chart.data.datasets[2].data = chartDataLightDate_minValue;
 
     light_chart.update(); 
 
@@ -339,10 +312,9 @@ function reqListenerSoil() {
     console.log('label data Soil date:', labelDataSoilDate);
 
     soil_chart.data.labels = labelDataSoilDate;
-    soil_chart.data.datasets[0].data = chartDataSoilDate_latestValue;
-    soil_chart.data.datasets[1].data = chartDataSoilDate_maxValue;
-    soil_chart.data.datasets[2].data = chartDataSoilDate_averageValue;
-    soil_chart.data.datasets[3].data = chartDataSoilDate_minValue;
+    soil_chart.data.datasets[0].data = chartDataSoilDate_maxValue;
+    soil_chart.data.datasets[1].data = chartDataSoilDate_averageValue;
+    soil_chart.data.datasets[2].data = chartDataSoilDate_minValue;
 
     soil_chart.update(); 
 
