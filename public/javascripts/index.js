@@ -8,8 +8,8 @@ var chartdataSoil = [];
 var labeldataLight = [];
 var chartdataLight = [];
 
-var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
-var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp"
+var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp"
 
 var intervalTime = 2000;
 /*

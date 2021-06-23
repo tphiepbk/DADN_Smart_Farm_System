@@ -5,16 +5,16 @@ var socket = io('http://localhost:3000/', {
 var port = 443;
 var host = "io.adafruit.com";
 var username = "tphiepbk";
-var password = "aio_vjlb21Jsae7D86XwPisWl5WVvud7";
+var password = "aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp";
 
 var topic = "tphiepbk/feeds/bk-iot-light-relay";
 
 var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
 var messageOff = JSON.stringify({ "id": "11", "name": "RELAY", "data": "0", "unit": "" });
 
-var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp"
 
-var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_vjlb21Jsae7D86XwPisWl5WVvud7"
+var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp"
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
