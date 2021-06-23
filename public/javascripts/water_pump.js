@@ -18,8 +18,21 @@ var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.js
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
+checkboxAutomatic.addEventListener('change', manualSwitch);
+
+function manualSwitch() {
+    if (checkboxAutomatic.checked == true) {
+        document.getElementById("manual-switch").style.pointerEvents= "none";
+        document.getElementById("manual-switch").style.opacity= "0.5";
+    }
+    else {
+        document.getElementById("manual-switch").style.pointerEvents= "auto";
+        document.getElementById("manual-switch").style.opacity= "1";
+    }
+}
+
 var repeat = null;
-var intervalTime = 4000;
+var intervalTime = 5000;
 
 // send a message
 function turnOn() {
