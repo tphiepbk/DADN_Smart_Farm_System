@@ -397,7 +397,7 @@ window.setInterval(updateClock, 1000);
 function updateClock() {
     var d = new Date();
     document.getElementById("time").innerHTML = d.toLocaleTimeString();
-    document.getElementById("date").innerHTML = d.toLocaleDateString();
+    document.getElementById("date").innerHTML = d.toLocaleDateString("vi-VN");
 }
 /*
 socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
