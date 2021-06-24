@@ -100,14 +100,24 @@ document.getElementById("textOn").style.display = "none";
 document.getElementById("textOff").style.display = "none";
 document.getElementById("textCurrentLightValue").style.display = "none";
 
+function calculateDuration(timestampA, timestampB) {
+    var datetimeA = new Date(timestampA);
+    var datetimeB = new Date(timestampB);
+
+    var ms = moment.utc(datetimeB).diff(moment.utc(datetimeA));
+    var d = moment.duration(ms);
+
+    return d.asMinutes();
+}
+
 // * For light chart
 var ctxLight = document.getElementById("light_chart").getContext("2d");
 
 var light_chart = new Chart(ctxLight, {
-    type: 'bar',
     data: {
         labels: [],
         datasets: [{
+            type: 'bar',
             label: 'On',
             data: [],
             backgroundColor: [
@@ -120,12 +130,25 @@ var light_chart = new Chart(ctxLight, {
         },
         {
             label: 'Off',
+            type: 'bar',
             data: [],
             backgroundColor: [
                 'rgb(255, 0, 0)'
             ],
             borderColor: [
                 'rgb(201, 203, 207)'
+            ],
+            borderWidth: 1
+        },
+        {
+            type: 'bar',
+            label: 'Working hours',
+            data: [],
+            backgroundColor: [
+                'rgb(87, 216, 255)'
+            ],
+            borderColor: [
+                'rgb(112, 128, 144)'
             ],
             borderWidth: 1
         }
@@ -218,6 +241,140 @@ function reqListenerRelay() {
         light_chart.data.labels = labelDataLightRelayDate.slice(0, 5);
         light_chart.data.datasets[0].data = numberOfLightOn.slice(0, 5);
         light_chart.data.datasets[1].data = numberOfLightOff.slice(0, 5);
+    }
+
+    // * Calculate working hours
+    var currentDate_labelDataLightRelay_workingHours = [];
+    var currentDate_chartDataLightRelay_workingHours = [];
+
+    var labelDataLightRelay_workingHours = [];
+    var chartDataLightRelay_workingHours = [];
+
+    for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
+
+        if (currentDate_labelDataLightRelay_workingHours.length == 0) {
+            currentDate_chartDataLightRelay_workingHours.push(chartDataLightRelay[i]);
+            currentDate_labelDataLightRelay_workingHours.push(labelDataLightRelay[i]);
+        }
+        else {
+            var currentDate = null;
+            var previousDate = null;
+
+            if (sortedLightByDay == true) {
+                currentDate = labelDataLightRelay[i].substr(0, 10);
+                previousDate = currentDate_labelDataLightRelay_workingHours[currentDate_labelDataLightRelay_workingHours.length-1].substr(0, 10);
+            }
+            else if (sortedLightByMonth == true) {
+                currentDate = labelDataLightRelay[i].substr(0, 7);
+                previousDate = currentDate_labelDataLightRelay_workingHours[currentDate_labelDataLightRelay_workingHours.length-1].substr(0, 7);
+            }
+            else {
+                currentDate = labelDataLightRelay[i].substr(0, 4);
+                previousDate = currentDate_labelDataLightRelay_workingHours[currentDate_labelDataLightRelay_workingHours.length-1].substr(0, 4);
+            }
+
+            if (previousDate == currentDate) {
+                currentDate_chartDataLightRelay_workingHours.push(chartDataLightRelay[i]);
+                currentDate_labelDataLightRelay_workingHours.push(labelDataLightRelay[i]);
+
+                if (i == labelDataLightRelay.length - 1) {
+                    console.log("Log : ");
+
+                    currentDate_chartDataLightRelay_workingHours.reverse();
+                    currentDate_labelDataLightRelay_workingHours.reverse();
+
+                    console.log(currentDate_chartDataLightRelay_workingHours);
+                    console.log(currentDate_labelDataLightRelay_workingHours);
+
+                    var slow = 0;
+                    var currentDate_totalWorkingHours = 0;
+                    while (slow < currentDate_chartDataLightRelay_workingHours.length - 1) {
+                        var found = false;
+                        if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
+                            var fast = slow + 1;
+                            while (fast < currentDate_chartDataLightRelay_workingHours.length) {
+                                if (currentDate_chartDataLightRelay_workingHours[fast] == "0") {
+                                    currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], currentDate_labelDataLightRelay_workingHours[fast]);
+                                    slow = fast + 1;
+                                    found = true;
+                                    break;
+                                }
+                                else {
+                                    fast++;
+                                }
+                            }
+                            if (found == false) {
+                                slow++;
+                            }
+                        }
+                        else {
+                            slow++;
+                        }
+                    }
+
+                    chartDataLightRelay_workingHours.push(currentDate_totalWorkingHours);
+                    labelDataLightRelay_workingHours.push(currentDate);
+                }
+            }
+            else {
+                console.log("Log : ");
+
+                currentDate_chartDataLightRelay_workingHours.reverse();
+                currentDate_labelDataLightRelay_workingHours.reverse();
+
+                console.log(currentDate_chartDataLightRelay_workingHours);
+                console.log(currentDate_labelDataLightRelay_workingHours);
+
+                var slow = 0;
+                var currentDate_totalWorkingHours = 0;
+                while (slow < currentDate_chartDataLightRelay_workingHours.length - 1) {
+                    var found = false;
+                    if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
+                        var fast = slow + 1;
+                        while (fast < currentDate_chartDataLightRelay_workingHours.length) {
+                            if (currentDate_chartDataLightRelay_workingHours[fast] == "0") {
+                                currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], currentDate_labelDataLightRelay_workingHours[fast]);
+                                slow = fast + 1;
+                                found = true;
+                                break;
+                            }
+                            else {
+                                fast++;
+                            }
+                        }
+                        if (found == false) {
+                            slow++;
+                        }
+                    }
+                    else {
+                        slow++;
+                    }
+                }
+
+                chartDataLightRelay_workingHours.push(currentDate_totalWorkingHours);
+                labelDataLightRelay_workingHours.push(currentDate);
+
+                currentDate_labelDataLightRelay_workingHours = [];
+                currentDate_chartDataLightRelay_workingHours = [];
+
+                currentDate_chartDataLightRelay_workingHours.push(chartDataLightRelay[i]);
+                currentDate_labelDataLightRelay_workingHours.push(labelDataLightRelay[i]);
+            }
+        }
+    }
+    // * 
+    console.log("working hours");
+    console.log(chartDataLightRelay_workingHours);
+    light_chart.data.datasets[2].data = chartDataLightRelay_workingHours;
+
+    if (sortedLightByDay == true) {
+        light_chart.data.datasets[2].data = chartDataLightRelay_workingHours.splice(0, 7);
+    }
+    else if (sortedLightByMonth == true) {
+        light_chart.data.datasets[2].data = chartDataLightRelay_workingHours.splice(0, 12);
+    }
+    else {
+        light_chart.data.datasets[2].data = chartDataLightRelay_workingHours.splice(0, 5);
     }
 
     light_chart.update(); 
