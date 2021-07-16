@@ -156,8 +156,8 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
-var sortedLightByDay = false;
-var sortedLightByMonth = true;
+var sortedLightByDay = true;
+var sortedLightByMonth = false;
 var sortedLightByYear = false;
 
 function reqListenerRelay() {

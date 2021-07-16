@@ -96,14 +96,24 @@ document.getElementById("textOn").style.display = "none";
 document.getElementById("textOff").style.display = "none";
 document.getElementById("textCurrentSoilValue").style.display = "none";
 
+function calculateDuration(timestampA, timestampB) {
+    var datetimeA = new Date(timestampA);
+    var datetimeB = new Date(timestampB);
+
+    var ms = moment.utc(datetimeB).diff(moment.utc(datetimeA));
+    var d = moment.duration(ms);
+
+    return d.asHours();
+}
+
 // * For light chart
 var ctxWaterPump = document.getElementById("water_pump_chart").getContext("2d");
 
 var water_pump_chart = new Chart(ctxWaterPump, {
-    type: 'bar',
     data: {
         labels: [],
         datasets: [{
+            type: 'bar',
             label: 'On',
             data: [],
             backgroundColor: [
@@ -116,6 +126,7 @@ var water_pump_chart = new Chart(ctxWaterPump, {
         },
         {
             label: 'Off',
+            type: 'bar',
             data: [],
             backgroundColor: [
                 'rgb(255, 0, 0)'
@@ -124,14 +135,26 @@ var water_pump_chart = new Chart(ctxWaterPump, {
                 'rgb(201, 203, 207)'
             ],
             borderWidth: 1
+        },
+        {
+            type: 'bar',
+            label: 'Working hours',
+            data: [],
+            backgroundColor: [
+                'rgb(87, 216, 255)'
+            ],
+            borderColor: [
+                'rgb(112, 128, 144)'
+            ],
+            borderWidth: 1
         }
         ]
     }
 });
 
-var sortedByDay = true;
-var sortedByMonth = false;
-var sortedByYear = false
+var sortedWaterPumpByDay = true;
+var sortedWaterPumpByMonth = false;
+var sortedWaterPumpByYear = false
 
 function reqListenerRelay() {
     var chartDataWaterPumpRelay = [];
@@ -167,10 +190,10 @@ function reqListenerRelay() {
     for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
 
         var currentDate = null;
-        if (sortedByDay == true) {
+        if (sortedWaterPumpByDay == true) {
             currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
         }
-        else if (sortedByMonth == true) {
+        else if (sortedWaterPumpByMonth == true) {
             currentDate = labelDataWaterPumpRelay[i].substr(0, 7);
         }
         else {
@@ -200,12 +223,12 @@ function reqListenerRelay() {
     numberOfWaterPumpOn.push(currentNumberWaterPumpOn);
     numberOfWaterPumpOff.push(currentNumberWaterPumpOff);
 
-    if (sortedByDay == true) {
+    if (sortedWaterPumpByDay == true) {
         water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 7);
         water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 7);
         water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 7);
     }
-    else if (sortedByMonth == true) {
+    else if (sortedWaterPumpByMonth == true) {
         water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 12);
         water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 12);
         water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 12);
@@ -214,6 +237,221 @@ function reqListenerRelay() {
         water_pump_chart.data.labels = labelDataWaterPumpRelayDate.splice(0, 5);
         water_pump_chart.data.datasets[0].data = numberOfWaterPumpOn.splice(0, 5);
         water_pump_chart.data.datasets[1].data = numberOfWaterPumpOff.splice(0, 5);
+    }
+
+    // * Calculate working hours
+    var currentDate_labelDataWaterPumpRelay_workingHours = [];
+    var currentDate_chartDataWaterPumpRelay_workingHours = [];
+
+    var labelDataWaterPumpRelay_workingHours = [];
+    var chartDataWaterPumpRelay_workingHours = [];
+
+    for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
+
+        if (currentDate_labelDataWaterPumpRelay_workingHours.length == 0) {
+            currentDate_chartDataWaterPumpRelay_workingHours.push(chartDataWaterPumpRelay[i]);
+            currentDate_labelDataWaterPumpRelay_workingHours.push(labelDataWaterPumpRelay[i]);
+        }
+        else {
+            var currentDate = null;
+            var previousDate = null;
+
+            if (sortedWaterPumpByDay == true) {
+                currentDate = labelDataWaterPumpRelay[i].substr(0, 10);
+                previousDate = currentDate_labelDataWaterPumpRelay_workingHours[currentDate_labelDataWaterPumpRelay_workingHours.length-1].substr(0, 10);
+            }
+            else if (sortedWaterPumpByMonth == true) {
+                currentDate = labelDataWaterPumpRelay[i].substr(0, 7);
+                previousDate = currentDate_labelDataWaterPumpRelay_workingHours[currentDate_labelDataWaterPumpRelay_workingHours.length-1].substr(0, 7);
+            }
+            else {
+                currentDate = labelDataWaterPumpRelay[i].substr(0, 4);
+                previousDate = currentDate_labelDataWaterPumpRelay_workingHours[currentDate_labelDataWaterPumpRelay_workingHours.length-1].substr(0, 4);
+            }
+
+            if (previousDate == currentDate) {
+                currentDate_chartDataWaterPumpRelay_workingHours.push(chartDataWaterPumpRelay[i]);
+                currentDate_labelDataWaterPumpRelay_workingHours.push(labelDataWaterPumpRelay[i]);
+
+                if (i == labelDataWaterPumpRelay.length - 1) {
+
+                    console.log("Log : ");
+
+                    currentDate_chartDataWaterPumpRelay_workingHours.reverse();
+                    currentDate_labelDataWaterPumpRelay_workingHours.reverse();
+
+                    console.log(currentDate_chartDataWaterPumpRelay_workingHours);
+                    console.log(currentDate_labelDataWaterPumpRelay_workingHours);
+
+                    var slow = 0;
+                    var currentDate_totalWorkingHours = 0;
+                    while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length - 1) {
+                        var found = false;
+                        if (currentDate_chartDataWaterPumpRelay_workingHours[slow] == "1") {
+                            var fast = slow + 1;
+                            while (fast < currentDate_chartDataWaterPumpRelay_workingHours.length) {
+                                if (currentDate_chartDataWaterPumpRelay_workingHours[fast] == "0") {
+                                    currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], currentDate_labelDataWaterPumpRelay_workingHours[fast]);
+                                    slow = fast + 1;
+                                    found = true;
+                                    break;
+                                }
+                                else {
+                                    fast++;
+                                }
+                            }
+                            if (found == false) {
+                                if (sortedWaterPumpByDay == true) {
+                                    var endOfTheDate = previousDate + "T23:59:59Z";
+                                }
+                                else if (sortedWaterPumpByMonth == true) {
+                                    var month = previousDate.substr(5, 2);
+                                    var endOfTheDate = previousDate;
+                                    if (month == "04" || month == "06" || month == "09" || month == "11") {
+                                        endOfTheDate += "-30T23:59:59Z";
+                                    }
+                                    else if (month == "02") {
+                                        var year = parseInt(previousDate.substr(0,4));
+                                        if (year % 4 == 0) {
+                                            endOfTheDate += "-29T23:59:59Z";
+                                        }
+                                        else {
+                                            endOfTheDate += "-28T23:59:59Z";
+                                        }
+                                    }
+                                    else {
+                                        endOfTheDate += "-31T23:59:59Z";
+                                    }
+                                }
+                                else {
+                                    var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                                }
+                                currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], endOfTheDate);
+                                slow = currentDate_chartDataWaterPumpRelay_workingHours.length;
+                            }
+                        }
+                        else {
+                            slow++;
+                        }
+                    }
+
+                    chartDataWaterPumpRelay_workingHours.push(currentDate_totalWorkingHours);
+                    labelDataWaterPumpRelay_workingHours.push(currentDate);
+                }
+            }
+            else {
+                //* testing
+                console.log("Original Log : ");
+
+                currentDate_chartDataWaterPumpRelay_workingHours.reverse();
+                currentDate_labelDataWaterPumpRelay_workingHours.reverse();
+
+                console.log(currentDate_chartDataWaterPumpRelay_workingHours);
+                console.log(currentDate_labelDataWaterPumpRelay_workingHours);
+
+                currentDate_chartDataWaterPumpRelay_workingHours.reverse();
+                currentDate_labelDataWaterPumpRelay_workingHours.reverse();
+                //* end testing
+
+                if (chartDataWaterPumpRelay[i] == "1") {
+                    if (sortedWaterPumpByDay == true) {
+                        var startOfTheDate = previousDate + "T00:00:00Z";
+                    }
+                    else if (sortedWaterPumpByMonth == true) {
+                        var startOfTheDate = previousDate + "-01T00:00:00Z";
+                    }
+                    else {
+                        var startOfTheDate = previousDate + "-01-01T00:00:00Z";
+                    }
+                    currentDate_chartDataWaterPumpRelay_workingHours.push("1");
+                    currentDate_labelDataWaterPumpRelay_workingHours.push(startOfTheDate);
+                }
+
+                currentDate_chartDataWaterPumpRelay_workingHours.reverse();
+                currentDate_labelDataWaterPumpRelay_workingHours.reverse();
+
+                //* testing
+                console.log("Modified Log : ");
+                console.log(currentDate_chartDataWaterPumpRelay_workingHours);
+                console.log(currentDate_labelDataWaterPumpRelay_workingHours);
+                //* end testing
+
+                var slow = 0;
+                var currentDate_totalWorkingHours = 0;
+                while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length - 1) {
+                    var found = false;
+                    if (currentDate_chartDataWaterPumpRelay_workingHours[slow] == "1") {
+                        var fast = slow + 1;
+                        while (fast < currentDate_chartDataWaterPumpRelay_workingHours.length) {
+                            if (currentDate_chartDataWaterPumpRelay_workingHours[fast] == "0") {
+                                currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], currentDate_labelDataWaterPumpRelay_workingHours[fast]);
+                                slow = fast + 1;
+                                found = true;
+                                break;
+                            }
+                            else {
+                                fast++;
+                            }
+                        }
+                        if (found == false) {
+                            if (sortedWaterPumpByDay == true) {
+                                var endOfTheDate = previousDate + "T23:59:59Z";
+                            }
+                            else if (sortedWaterPumpByMonth == true) {
+                                var month = previousDate.substr(5, 2);
+                                var endOfTheDate = previousDate;
+                                if (month == "04" || month == "06" || month == "09" || month == "11") {
+                                    endOfTheDate += "-30T23:59:59Z";
+                                }
+                                else if (month == "02") {
+                                    var year = parseInt(previousDate.substr(0,4));
+                                    if (year % 4 == 0) {
+                                        endOfTheDate += "-29T23:59:59Z";
+                                    }
+                                    else {
+                                        endOfTheDate += "-28T23:59:59Z";
+                                    }
+                                }
+                                else {
+                                    endOfTheDate += "-31T23:59:59Z";
+                                }
+                            }
+                            else {
+                                var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                            }
+                            currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], endOfTheDate);
+                            slow = currentDate_chartDataWaterPumpRelay_workingHours.length;
+                        }
+                    }
+                    else {
+                        slow++;
+                    }
+                }
+
+                chartDataWaterPumpRelay_workingHours.push(currentDate_totalWorkingHours);
+                labelDataWaterPumpRelay_workingHours.push(currentDate);
+
+                currentDate_labelDataWaterPumpRelay_workingHours = [];
+                currentDate_chartDataWaterPumpRelay_workingHours = [];
+
+                currentDate_chartDataWaterPumpRelay_workingHours.push(chartDataWaterPumpRelay[i]);
+                currentDate_labelDataWaterPumpRelay_workingHours.push(labelDataWaterPumpRelay[i]);
+            }
+        }
+    }
+    // * 
+    console.log("working hours");
+    console.log(chartDataWaterPumpRelay_workingHours);
+    water_pump_chart.data.datasets[2].data = chartDataWaterPumpRelay_workingHours;
+
+    if (sortedWaterPumpByDay == true) {
+        water_pump_chart.data.datasets[2].data = chartDataWaterPumpRelay_workingHours.splice(0, 7);
+    }
+    else if (sortedWaterPumpByMonth == true) {
+        water_pump_chart.data.datasets[2].data = chartDataWaterPumpRelay_workingHours.splice(0, 12);
+    }
+    else {
+        water_pump_chart.data.datasets[2].data = chartDataWaterPumpRelay_workingHours.splice(0, 5);
     }
 
     water_pump_chart.update(); 
@@ -295,19 +533,19 @@ function loader() {
 
 function sortStyle(typeOfSort) {
     if (typeOfSort == "day") {
-        sortedByDay = true;
-        sortedByMonth = false;
-        sortedByYear = false;
+        sortedWaterPumpByDay = true;
+        sortedWaterPumpByMonth = false;
+        sortedWaterPumpByYear = false;
     }
     else if (typeOfSort == "month") {
-        sortedByDay = false;
-        sortedByMonth = true;
-        sortedByYear = false;
+        sortedWaterPumpByDay = false;
+        sortedWaterPumpByMonth = true;
+        sortedWaterPumpByYear = false;
     }
     else {
-        sortedByDay = false;
-        sortedByMonth = false;
-        sortedByYear = true;
+        sortedWaterPumpByDay = false;
+        sortedWaterPumpByMonth = false;
+        sortedWaterPumpByYear = true;
     }
 }
 
