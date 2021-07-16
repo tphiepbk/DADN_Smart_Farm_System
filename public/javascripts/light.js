@@ -107,7 +107,7 @@ function calculateDuration(timestampA, timestampB) {
     var ms = moment.utc(datetimeB).diff(moment.utc(datetimeA));
     var d = moment.duration(ms);
 
-    return d.asMinutes();
+    return d.asHours();
 }
 
 // * For light chart
@@ -278,6 +278,7 @@ function reqListenerRelay() {
                 currentDate_labelDataLightRelay_workingHours.push(labelDataLightRelay[i]);
 
                 if (i == labelDataLightRelay.length - 1) {
+
                     console.log("Log : ");
 
                     currentDate_chartDataLightRelay_workingHours.reverse();
@@ -304,7 +305,33 @@ function reqListenerRelay() {
                                 }
                             }
                             if (found == false) {
-                                slow++;
+                                if (sortedLightByDay == true) {
+                                    var endOfTheDate = previousDate + "T23:59:59Z";
+                                }
+                                else if (sortedLightByMonth == true) {
+                                    var month = previousDate.substr(5, 2);
+                                    var endOfTheDate = previousDate;
+                                    if (month == "04" || month == "06" || month == "09" || month == "11") {
+                                        endOfTheDate += "-30T23:59:59Z";
+                                    }
+                                    else if (month == "02") {
+                                        var year = parseInt(previousDate.substr(0,4));
+                                        if (year % 4 == 0) {
+                                            endOfTheDate += "-29T23:59:59Z";
+                                        }
+                                        else {
+                                            endOfTheDate += "-28T23:59:59Z";
+                                        }
+                                    }
+                                    else {
+                                        endOfTheDate += "-31T23:59:59Z";
+                                    }
+                                }
+                                else {
+                                    var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                                }
+                                currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], endOfTheDate);
+                                slow = currentDate_chartDataLightRelay_workingHours.length;
                             }
                         }
                         else {
@@ -317,13 +344,41 @@ function reqListenerRelay() {
                 }
             }
             else {
-                console.log("Log : ");
+                //* testing
+                console.log("Original Log : ");
 
                 currentDate_chartDataLightRelay_workingHours.reverse();
                 currentDate_labelDataLightRelay_workingHours.reverse();
 
                 console.log(currentDate_chartDataLightRelay_workingHours);
                 console.log(currentDate_labelDataLightRelay_workingHours);
+
+                currentDate_chartDataLightRelay_workingHours.reverse();
+                currentDate_labelDataLightRelay_workingHours.reverse();
+                //* end testing
+
+                if (chartDataLightRelay[i] == "1") {
+                    if (sortedLightByDay == true) {
+                        var startOfTheDate = previousDate + "T00:00:00Z";
+                    }
+                    else if (sortedLightByMonth == true) {
+                        var startOfTheDate = previousDate + "-01T00:00:00Z";
+                    }
+                    else {
+                        var startOfTheDate = previousDate + "-01-01T00:00:00Z";
+                    }
+                    currentDate_chartDataLightRelay_workingHours.push("1");
+                    currentDate_labelDataLightRelay_workingHours.push(startOfTheDate);
+                }
+
+                currentDate_chartDataLightRelay_workingHours.reverse();
+                currentDate_labelDataLightRelay_workingHours.reverse();
+
+                //* testing
+                console.log("Modified Log : ");
+                console.log(currentDate_chartDataLightRelay_workingHours);
+                console.log(currentDate_labelDataLightRelay_workingHours);
+                //* end testing
 
                 var slow = 0;
                 var currentDate_totalWorkingHours = 0;
@@ -343,7 +398,33 @@ function reqListenerRelay() {
                             }
                         }
                         if (found == false) {
-                            slow++;
+                            if (sortedLightByDay == true) {
+                                var endOfTheDate = previousDate + "T23:59:59Z";
+                            }
+                            else if (sortedLightByMonth == true) {
+                                var month = previousDate.substr(5, 2);
+                                var endOfTheDate = previousDate;
+                                if (month == "04" || month == "06" || month == "09" || month == "11") {
+                                    endOfTheDate += "-30T23:59:59Z";
+                                }
+                                else if (month == "02") {
+                                    var year = parseInt(previousDate.substr(0,4));
+                                    if (year % 4 == 0) {
+                                        endOfTheDate += "-29T23:59:59Z";
+                                    }
+                                    else {
+                                        endOfTheDate += "-28T23:59:59Z";
+                                    }
+                                }
+                                else {
+                                    endOfTheDate += "-31T23:59:59Z";
+                                }
+                            }
+                            else {
+                                var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                            }
+                            currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], endOfTheDate);
+                            slow = currentDate_chartDataLightRelay_workingHours.length;
                         }
                     }
                     else {
