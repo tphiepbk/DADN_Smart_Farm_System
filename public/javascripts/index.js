@@ -12,58 +12,6 @@ var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.
 var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
 
 var intervalTime = 2000;
-/*
-function init() {
-    console.log("Connecting...");
-
-    clientLight = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-
-    clientWaterPump = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-
-    clientLight.onConnectionLost = onConnectionLost;
-    clientLight.onMessageArrived = onMessageArrived;
-
-    clientWaterPump.onConnectionLost = onConnectionLost;
-    clientWaterPump.onMessageArrived = onMessageArrived;
-
-    clientLight.connect({
-        password: password,
-        userName: username,
-        onSuccess: onConnectLight
-    });
-
-    clientWaterPump.connect({
-        password: password,
-        userName: username,
-        onSuccess: onConnectWaterPump
-    });
-}
-
-// called when the client connects
-function onConnectLight() {
-    clientLight.subscribe(topicLightRelay);
-    console.log("Connect to Light successfully");
-}
-
-function onConnectWaterPump() {
-    clientWaterPump.subscribe(topicWaterPumpRelay);
-    console.log("Connect to Water Pump successfully");
-}
-
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-    if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:" + responseObject.errorMessage);
-    }
-}
-
-// called when a message arrives
-function onMessageArrived(message) {
-    console.log("onMessageArrived:" + message.payloadString);
-}
-
-init();
-*/
 
 var ctxSoil = document.getElementById("soil_chart").getContext("2d");
 var soil_chart = new Chart(ctxSoil, {
@@ -427,29 +375,3 @@ function updateClock() {
     document.getElementById("time").innerHTML = d.toLocaleTimeString();
     document.getElementById("date").innerHTML = d.toLocaleDateString("vi-VN");
 }
-/*
-socket.on('send_data', function(ele1, ele2, ele3, ele4, ele5, ele6, ele7, ele8) {
-    chartdataSoil = ele1;
-    labeldataSoil = ele2;
-    chartdataLight  = ele3;
-    labeldataLight = ele4;
-
-    console.log('chart data soil:', chartdataSoil);
-    console.log('label data soil:', labeldataSoil);
-    console.log('chart data light:', chartdataLight);
-    console.log('label data light:', labeldataLight);
-
-    light_chart.data.labels = labeldataLight;
-    light_chart.data.datasets[0].data = chartdataLight;
-    light_chart.update();
-
-    soil_chart.data.labels = labeldataSoil;
-    soil_chart.data.datasets[0].data = chartdataSoil;
-    soil_chart.update();
-});
-
-lowLightAlertHide();
-highLightAlertHide();
-lowSoilAlertHide();
-highSoilAlertHide();
-*/
