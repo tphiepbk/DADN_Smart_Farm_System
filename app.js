@@ -19,7 +19,7 @@ const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.n
 
 //require("./db/conn");
 //require("./db/get_data");
-require("./db/get_data_test");
+require("./db/get_data");
 
 // Passport Config
 require('./config/passport')(passport);

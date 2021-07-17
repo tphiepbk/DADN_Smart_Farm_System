@@ -4,12 +4,22 @@ const assert = require("assert");
 const MongoClient = require("mongodb").MongoClient;
 
 // Connection string
-const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot?retryWrites=true&w=majority";
+//const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
+const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
 
-const soil_url = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data";
-const light_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data";
-const light_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data";
-const water_pump_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data";
+// ADA Fruit devices
+const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+const light_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+const soil_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+const water_pump_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+
+/*
+const light_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data"
+const light_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data"
+const soil_url = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data"
+const water_pump_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data"
+*/
+
 
 function upload(collectionName, data) {
     MongoClient.connect(connectionString, function(err, client) {
@@ -19,6 +29,7 @@ function upload(collectionName, data) {
 
         const db = client.db('bk-iot');
 
+        // Use index to prevent duplicate
         db.collection(collectionName).createIndex({"id":1}, {unique: true});
 
         db.collection(collectionName).insert(data)
@@ -28,7 +39,6 @@ function upload(collectionName, data) {
         .catch((err) => {
             //console.log(err.message);
         });
-
         client.close();
     });
 };
