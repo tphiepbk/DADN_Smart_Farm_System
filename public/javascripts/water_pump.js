@@ -246,6 +246,8 @@ function reqListenerRelay() {
     var labelDataWaterPumpRelay_workingHours = [];
     var chartDataWaterPumpRelay_workingHours = [];
 
+    var dateIndex = 0;
+
     for (var i = 0 ; i < labelDataWaterPumpRelay.length ; i++) {
 
         if (currentDate_labelDataWaterPumpRelay_workingHours.length == 0) {
@@ -277,6 +279,8 @@ function reqListenerRelay() {
 
                     console.log("Log : ");
 
+                    console.log("dateIndex " + dateIndex);
+
                     currentDate_chartDataWaterPumpRelay_workingHours.reverse();
                     currentDate_labelDataWaterPumpRelay_workingHours.reverse();
 
@@ -285,7 +289,7 @@ function reqListenerRelay() {
 
                     var slow = 0;
                     var currentDate_totalWorkingHours = 0;
-                    while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length - 1) {
+                    while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length) {
                         var found = false;
                         if (currentDate_chartDataWaterPumpRelay_workingHours[slow] == "1") {
                             var fast = slow + 1;
@@ -326,6 +330,14 @@ function reqListenerRelay() {
                                 else {
                                     var endOfTheDate = previousDate + "-12-31T23:59:59Z";
                                 }
+
+                                if (dateIndex == 0) {
+                                    var d = new Date();
+                                    endOfTheDate = d.toISOString();
+                                    console.log(endOfTheDate);
+                                    console.log("Set end of the date to current datetime");
+                                }
+
                                 currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], endOfTheDate);
                                 slow = currentDate_chartDataWaterPumpRelay_workingHours.length;
                             }
@@ -337,10 +349,15 @@ function reqListenerRelay() {
 
                     chartDataWaterPumpRelay_workingHours.push(currentDate_totalWorkingHours);
                     labelDataWaterPumpRelay_workingHours.push(currentDate);
+                    
+                    dateIndex++;
                 }
             }
             else {
                 //* testing
+
+                console.log("dateIndex " + dateIndex);
+
                 console.log("Original Log : ");
 
                 currentDate_chartDataWaterPumpRelay_workingHours.reverse();
@@ -378,7 +395,7 @@ function reqListenerRelay() {
 
                 var slow = 0;
                 var currentDate_totalWorkingHours = 0;
-                while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length - 1) {
+                while (slow < currentDate_chartDataWaterPumpRelay_workingHours.length) {
                     var found = false;
                     if (currentDate_chartDataWaterPumpRelay_workingHours[slow] == "1") {
                         var fast = slow + 1;
@@ -394,12 +411,13 @@ function reqListenerRelay() {
                             }
                         }
                         if (found == false) {
+                            var endOfTheDate = null;
                             if (sortedWaterPumpByDay == true) {
-                                var endOfTheDate = previousDate + "T23:59:59Z";
+                                endOfTheDate = previousDate + "T23:59:59Z";
                             }
                             else if (sortedWaterPumpByMonth == true) {
                                 var month = previousDate.substr(5, 2);
-                                var endOfTheDate = previousDate;
+                                endOfTheDate = previousDate;
                                 if (month == "04" || month == "06" || month == "09" || month == "11") {
                                     endOfTheDate += "-30T23:59:59Z";
                                 }
@@ -417,8 +435,16 @@ function reqListenerRelay() {
                                 }
                             }
                             else {
-                                var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                                endOfTheDate = previousDate + "-12-31T23:59:59Z";
                             }
+
+                            if (dateIndex == 0) {
+                                var d = new Date();
+                                endOfTheDate = d.toISOString();
+                                console.log(endOfTheDate);
+                                console.log("Set end of the date to current datetime");
+                            }
+
                             currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataWaterPumpRelay_workingHours[slow], endOfTheDate);
                             slow = currentDate_chartDataWaterPumpRelay_workingHours.length;
                         }
@@ -430,6 +456,8 @@ function reqListenerRelay() {
 
                 chartDataWaterPumpRelay_workingHours.push(currentDate_totalWorkingHours);
                 labelDataWaterPumpRelay_workingHours.push(currentDate);
+
+                dateIndex++;
 
                 currentDate_labelDataWaterPumpRelay_workingHours = [];
                 currentDate_chartDataWaterPumpRelay_workingHours = [];

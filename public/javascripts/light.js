@@ -250,6 +250,8 @@ function reqListenerRelay() {
     var labelDataLightRelay_workingHours = [];
     var chartDataLightRelay_workingHours = [];
 
+    var dateIndex = 0;
+
     for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
 
         if (currentDate_labelDataLightRelay_workingHours.length == 0) {
@@ -281,6 +283,8 @@ function reqListenerRelay() {
 
                     console.log("Log : ");
 
+                    console.log("dateIndex " + dateIndex);
+
                     currentDate_chartDataLightRelay_workingHours.reverse();
                     currentDate_labelDataLightRelay_workingHours.reverse();
 
@@ -289,7 +293,7 @@ function reqListenerRelay() {
 
                     var slow = 0;
                     var currentDate_totalWorkingHours = 0;
-                    while (slow < currentDate_chartDataLightRelay_workingHours.length - 1) {
+                    while (slow < currentDate_chartDataLightRelay_workingHours.length) {
                         var found = false;
                         if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
                             var fast = slow + 1;
@@ -330,6 +334,14 @@ function reqListenerRelay() {
                                 else {
                                     var endOfTheDate = previousDate + "-12-31T23:59:59Z";
                                 }
+
+                                if (dateIndex == 0) {
+                                    var d = new Date();
+                                    endOfTheDate = d.toISOString();
+                                    console.log(endOfTheDate);
+                                    console.log("Set end of the date to current datetime");
+                                }
+
                                 currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], endOfTheDate);
                                 slow = currentDate_chartDataLightRelay_workingHours.length;
                             }
@@ -341,10 +353,14 @@ function reqListenerRelay() {
 
                     chartDataLightRelay_workingHours.push(currentDate_totalWorkingHours);
                     labelDataLightRelay_workingHours.push(currentDate);
+
+                    dateIndex++;
                 }
             }
             else {
                 //* testing
+                console.log("dateIndex " + dateIndex);
+
                 console.log("Original Log : ");
 
                 currentDate_chartDataLightRelay_workingHours.reverse();
@@ -382,7 +398,7 @@ function reqListenerRelay() {
 
                 var slow = 0;
                 var currentDate_totalWorkingHours = 0;
-                while (slow < currentDate_chartDataLightRelay_workingHours.length - 1) {
+                while (slow < currentDate_chartDataLightRelay_workingHours.length) {
                     var found = false;
                     if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
                         var fast = slow + 1;
@@ -398,12 +414,13 @@ function reqListenerRelay() {
                             }
                         }
                         if (found == false) {
+                            var endOfTheDate = null;
                             if (sortedLightByDay == true) {
-                                var endOfTheDate = previousDate + "T23:59:59Z";
+                                endOfTheDate = previousDate + "T23:59:59Z";
                             }
                             else if (sortedLightByMonth == true) {
                                 var month = previousDate.substr(5, 2);
-                                var endOfTheDate = previousDate;
+                                endOfTheDate = previousDate;
                                 if (month == "04" || month == "06" || month == "09" || month == "11") {
                                     endOfTheDate += "-30T23:59:59Z";
                                 }
@@ -421,8 +438,16 @@ function reqListenerRelay() {
                                 }
                             }
                             else {
-                                var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                                endOfTheDate = previousDate + "-12-31T23:59:59Z";
                             }
+
+                            if (dateIndex == 0) {
+                                var d = new Date();
+                                endOfTheDate = d.toISOString();
+                                console.log(endOfTheDate);
+                                console.log("Set end of the date to current datetime");
+                            }
+
                             currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], endOfTheDate);
                             slow = currentDate_chartDataLightRelay_workingHours.length;
                         }
@@ -434,6 +459,8 @@ function reqListenerRelay() {
 
                 chartDataLightRelay_workingHours.push(currentDate_totalWorkingHours);
                 labelDataLightRelay_workingHours.push(currentDate);
+
+                dateIndex++;
 
                 currentDate_labelDataLightRelay_workingHours = [];
                 currentDate_chartDataLightRelay_workingHours = [];
