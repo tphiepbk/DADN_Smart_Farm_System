@@ -2,6 +2,8 @@
 <html>
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/2.3.2/moment-duration-format.min.js" integrity="sha512-ej3mVbjyGQoZGS3JkES4ewdpjD8UBxHRGW+MN5j7lg3aGQ0k170sFCj5QJVCFghZRCio7DEmyi+8/HAwmwWWiA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <h1>The input element</h1>
 
@@ -11,12 +13,23 @@
 <input type="text" id="light_value"><br><br>
 
 <input type="submit" value="Submit Soil Data" onclick="publishSoilData()">
-
 <input type="submit" value="Submit Light Data" onclick="publishLightData()">
 
-<p>Click the "Submit" button and the form-data will be sent to a page on the 
-server called "action_page.php".</p>
+<h1>Calculate time duration</h1>
+
+<label>Start Date </label>
+<input type="text" id="start_date"><br><br>
+
+<label>End Date </label>
+<input type="text" id="end_date"><br><br>
+
+<input type="submit" value="Calculate time duration" onclick="trigger()">
+
+<p>Results : </p>
+<p id="result">NULL</p>
 
 <script src="test_send_data.js"></script>
+<script src="time_duration.js"></script>
+
 </body>
 </html>
