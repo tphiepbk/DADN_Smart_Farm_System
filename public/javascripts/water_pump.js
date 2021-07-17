@@ -1,16 +1,18 @@
+const aio_key = getAIOKey();
+
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
-var password    = "aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ";
+var password    = aio_key;
 
 var topic = "tphiepbk/feeds/bk-iot-water-pump-relay";
 
 var messageOn = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "1" , "unit" : ""});
 var messageOff = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "0" , "unit" : ""});
 
-var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + aio_key;
 
-var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 

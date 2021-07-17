@@ -17,6 +17,9 @@
 * Test model - run this command : **npm run dev**
 * Release model - run this command : **npm run start**
 
+## AIO_Key
+* When the aio_key on AdaFruit server changes, just change the aio_key variable in file "public/javascripts/aio_key.js" and "db/get_data.js"
+
 ## About
 
 ***Powered by FWB Team***:

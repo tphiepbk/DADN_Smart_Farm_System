@@ -1,6 +1,4 @@
-const socket = io('http://localhost:3000/', {
-    reconnectionDelayMax: 7000
-});
+const aio_key = getAIOKey();
 
 var labeldataSoil = [];
 var chartdataSoil = [];
@@ -8,8 +6,8 @@ var chartdataSoil = [];
 var labeldataLight = [];
 var chartdataLight = [];
 
-var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
-var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ"
+var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + aio_key;
+var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
 
 var intervalTime = 2000;
 

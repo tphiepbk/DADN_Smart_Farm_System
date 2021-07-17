@@ -1,7 +1,9 @@
+const aio_key = getAIOKey();
+
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
-var password    = "aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ";
+var password    = aio_key;
 
 var topicSoil = "tphiepbk/feeds/bk-iot-soil";
 var topicLight = "tphiepbk/feeds/bk-iot-light";
