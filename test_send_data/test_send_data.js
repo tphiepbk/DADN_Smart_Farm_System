@@ -1,7 +1,7 @@
 var port        = 443;
 var host        = "io.adafruit.com";
 var username    = "tphiepbk";
-var password    = "aio_cYBc43npiEvVpGtSYhA5fQ3r0PSp";
+var password    = "aio_bSDL29hJEUFdmxkrj3OpHsNLJqxZ";
 
 var topicSoil = "tphiepbk/feeds/bk-iot-soil";
 var topicLight = "tphiepbk/feeds/bk-iot-light";
