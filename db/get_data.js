@@ -59,9 +59,21 @@ function getData(collectionName,url) {
     })
 };
 
+module.exports = {
+    fullLoader : function() {
+        console.log("Loading data from url to MongoDB...");
+        getData('bk-iot-light', light_url);
+        getData('bk-iot-soil', soil_url);
+        getData('bk-iot-light-relay', light_relay_url);
+        getData('bk-iot-water-pump-relay', water_pump_relay_url);
+    }
+};
+
+/*
 setInterval(function(){
     getData('bk-iot-light', light_url);
     getData('bk-iot-soil', soil_url);
     getData('bk-iot-light-relay', light_relay_url);
     getData('bk-iot-water-pump-relay', water_pump_relay_url);
 }, 1000);
+*/

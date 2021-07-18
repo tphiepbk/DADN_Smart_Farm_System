@@ -154,30 +154,7 @@ var sortedWaterPumpByDay = true;
 var sortedWaterPumpByMonth = false;
 var sortedWaterPumpByYear = false
 
-function reqListenerRelay() {
-    var chartDataWaterPumpRelay = [];
-    var labelDataWaterPumpRelay = [];
-
-    var res = JSON.parse(this.responseText);
-
-    for (var i = 0 ; i < res.length ; i++) {
-        chartDataWaterPumpRelay.push(JSON.parse(res[i].value).data);
-        labelDataWaterPumpRelay.push(res[i].created_at);
-    }
-
-    console.log('chart data water pump relay:', chartDataWaterPumpRelay);
-    console.log('label data water pump relay:', labelDataWaterPumpRelay);
-
-    var currentStateOfWaterPump = chartDataWaterPumpRelay[0];
-    if (currentStateOfWaterPump == 1) {
-        document.getElementById("textOn").style.display = "block";
-        document.getElementById("textOff").style.display = "none";
-    }
-    else {
-        document.getElementById("textOn").style.display = "none";
-        document.getElementById("textOff").style.display = "block";
-    }
-
+function loadChartData(chartDataWaterPumpRelay, labelDataWaterPumpRelay) {
     var labelDataWaterPumpRelayDate = [];
     var numberOfWaterPumpOn = [];
     var numberOfWaterPumpOff = [];
@@ -483,6 +460,31 @@ function reqListenerRelay() {
     water_pump_chart.update(); 
 }
 
+function reqListenerRelay() {
+    var chartDataWaterPumpRelay = [];
+    var labelDataWaterPumpRelay = [];
+
+    var res = JSON.parse(this.responseText);
+
+    for (var i = 0 ; i < res.length ; i++) {
+        chartDataWaterPumpRelay.push(JSON.parse(res[i].value).data);
+        labelDataWaterPumpRelay.push(res[i].created_at);
+    }
+
+    console.log('chart data water pump relay:', chartDataWaterPumpRelay);
+    console.log('label data water pump relay:', labelDataWaterPumpRelay);
+
+    var currentStateOfWaterPump = chartDataWaterPumpRelay[0];
+    if (currentStateOfWaterPump == 1) {
+        document.getElementById("textOn").style.display = "block";
+        document.getElementById("textOff").style.display = "none";
+    }
+    else {
+        document.getElementById("textOn").style.display = "none";
+        document.getElementById("textOff").style.display = "block";
+    }
+}
+
 function reqListenerSoil() {
     var chartDataSoil = [];
 
@@ -574,6 +576,19 @@ function sortStyle(typeOfSort) {
         sortedWaterPumpByYear = true;
     }
 }
+
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
+socket.on("send_data", function (element1, element2, element3, element4) {
+    /*
+    console.log("Received : ");
+    console.log(element1);
+    console.log(element2);
+    */
+    loadChartData(element3, element4);
+});
 
 repeat = setInterval(() => {
     loader();

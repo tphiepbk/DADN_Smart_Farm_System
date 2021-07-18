@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
-const MongoClient = require('mongodb').MongoClient;
 const expressLayouts = require('express-ejs-layouts');
 const passport = require('passport');
 const flash = require('connect-flash');
@@ -14,7 +13,7 @@ const User = require("./models/User");
 const { compareSync } = require("bcryptjs");
 
 // * Automatically get data from URL to MongoDB
-require("./db/get_data");
+const dataLoader = require("./db/get_data");
 
 // Passport Config
 require('./config/passport')(passport);
@@ -27,7 +26,7 @@ mongoose.connect("mongodb+srv://Banvoiloiich:123@cluster0.b4qy2.mongodb.net/myFi
     useFindAndModify: false,
 })
 .then(() => {
-    console.log("connected to mongodb cloud! :)");
+    console.log("Connected to mongodb cloud (credential database) !");
 })
 .catch((err) => {
     console.log(err);
@@ -85,6 +84,63 @@ app.use(function(req, res, next) {
 // Routes
 app.use('/', require('./routes/index.js'));
 app.use('/', require('./routes/users.js'));
+
+/*
+setInterval(() => {
+    dataLoader.fullLoader();
+}, 1000);
+*/
+
+const MongoClient = require('mongodb').MongoClient;
+const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
+
+function iterateFunc(doc) {
+    console.log(JSON.stringify(doc, null, 4));
+};
+
+function errorFunc(error) {
+    console.log(error);
+};
+
+io.on("connection", socket => {
+
+    console.log("Connected to SocketIO successfully");
+    var element = "hello world";
+
+    setInterval(() => {
+
+        dataLoader.fullLoader();
+
+        MongoClient.connect(connectionString, async function(err, client) {
+            const db = client.db("bk-iot");
+
+            var chartDataLightRelay = [];
+            var labelDataLightRelay = [];
+            var collection_light_relay = db.collection('bk-iot-light-relay');
+            const cursor_light_relay = collection_light_relay.find({}).sort({created_at : -1});
+            const allValues_light_relay = await cursor_light_relay.toArray(); 
+            for (var element of allValues_light_relay) {
+                labelDataLightRelay.push(element.created_at);
+                chartDataLightRelay.push(JSON.parse(element.value).data);
+            }
+
+            var chartDataWaterPumpRelay = [];
+            var labelDataWaterPumpRelay = [];
+            var collection_water_pump_relay = db.collection('bk-iot-water-pump-relay');
+            const cursor_water_pump_relay = collection_water_pump_relay.find({}).sort({created_at : -1});
+            const allValues_water_pump_relay = await cursor_water_pump_relay.toArray(); 
+            for (var element of allValues_water_pump_relay) {
+                labelDataWaterPumpRelay.push(element.created_at);
+                chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
+            }
+
+            socket.emit("send_data", chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
+
+            client.close();
+        });
+
+    }, 1000);
+});
 
 server.listen(port, () =>{
     console.log('Server is running at port ' + port);

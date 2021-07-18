@@ -158,30 +158,7 @@ var sortedLightByDay = true;
 var sortedLightByMonth = false;
 var sortedLightByYear = false;
 
-function reqListenerRelay() {
-    var chartDataLightRelay = [];
-    var labelDataLightRelay = [];
-
-    var res = JSON.parse(this.responseText);
-
-    for (var i = 0 ; i < res.length ; i++) {
-        chartDataLightRelay.push(JSON.parse(res[i].value).data);
-        labelDataLightRelay.push(res[i].created_at);
-    }
-
-    console.log('chart data light relay:', chartDataLightRelay);
-    console.log('label data light relay:', labelDataLightRelay);
-
-    var currentStateOfLight = chartDataLightRelay[0];
-    if (currentStateOfLight == 1) {
-        document.getElementById("textOn").style.display = "block";
-        document.getElementById("textOff").style.display = "none";
-    }
-    else {
-        document.getElementById("textOn").style.display = "none";
-        document.getElementById("textOff").style.display = "block";
-    }
-
+function loadChartData(chartDataLightRelay, labelDataLightRelay) {
     var labelDataLightRelayDate = [];
     var numberOfLightOn = [];
     var numberOfLightOff = [];
@@ -486,6 +463,31 @@ function reqListenerRelay() {
     light_chart.update(); 
 }
 
+function reqListenerRelay() {
+    var chartDataLightRelay = [];
+    var labelDataLightRelay = [];
+
+    var res = JSON.parse(this.responseText);
+
+    for (var i = 0 ; i < res.length ; i++) {
+        chartDataLightRelay.push(JSON.parse(res[i].value).data);
+        labelDataLightRelay.push(res[i].created_at);
+    }
+
+    console.log('chart data light relay:', chartDataLightRelay);
+    console.log('label data light relay:', labelDataLightRelay);
+
+    var currentStateOfLight = chartDataLightRelay[0];
+    if (currentStateOfLight == 1) {
+        document.getElementById("textOn").style.display = "block";
+        document.getElementById("textOff").style.display = "none";
+    }
+    else {
+        document.getElementById("textOn").style.display = "none";
+        document.getElementById("textOff").style.display = "block";
+    }
+}
+
 function reqListenerLight() {
     var chartDataLight = [];
 
@@ -571,6 +573,19 @@ function sortStyle(typeOfSort) {
         sortedLightByYear = true;
     }
 }
+
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
+socket.on("send_data", function (element1, element2, element3, element4) {
+    /*
+    console.log("Received : ");
+    console.log(element1);
+    console.log(element2);
+    */
+    loadChartData(element1, element2);
+});
 
 repeat = setInterval(() => {
     loader();
