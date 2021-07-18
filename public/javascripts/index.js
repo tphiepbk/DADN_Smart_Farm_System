@@ -105,17 +105,7 @@ var sortedLightByDay = true;
 var sortedLightByMonth = false;
 var sortedLightByYear = false;
 
-function reqListenerLight() {
-    var chartDataLight = [];
-    var labelDataLight = [];
-
-    var res = JSON.parse(this.responseText);
-
-    for (var i = 0 ; i < res.length ; i++) {
-        chartDataLight.push(JSON.parse(res[i].value).data);
-        labelDataLight.push(res[i].created_at);
-    }
-
+function loadLightChartData(chartDataLight, labelDataLight) {
     console.log('chart data light :', chartDataLight);
     console.log('label data light :', labelDataLight);
 
@@ -194,25 +184,18 @@ function reqListenerLight() {
     }
 
     light_chart.update(); 
+}
 
-    document.getElementById("text-current-light-value").innerHTML = chartDataLightDate_latestValue[0];
+function reqListenerLight() {
+    var res = JSON.parse(this.responseText);
+    document.getElementById("text-current-light-value").innerHTML = JSON.parse(res[0].value).data;
 }
 
 var sortedSoilByDay = true;
 var sortedSoilByMonth = false;
 var sortedSoilByYear = false;
 
-function reqListenerSoil() {
-    var chartDataSoil = [];
-    var labelDataSoil = [];
-
-    var res = JSON.parse(this.responseText);
-
-    for (var i = 0 ; i < res.length ; i++) {
-        chartDataSoil.push(JSON.parse(res[i].value).data);
-        labelDataSoil.push(res[i].created_at);
-    }
-
+function loadSoilChartData(chartDataSoil, labelDataSoil) {
     console.log('chart data soil :', chartDataSoil);
     console.log('label data soil :', labelDataSoil);
 
@@ -291,8 +274,11 @@ function reqListenerSoil() {
     }
 
     soil_chart.update(); 
+}
 
-    document.getElementById("text-current-soil-value").innerHTML = chartDataSoilDate_latestValue[0];
+function reqListenerSoil() {
+    var res = JSON.parse(this.responseText);
+    document.getElementById("text-current-soil-value").innerHTML = JSON.parse(res[0].value).data;
 }
 
 function loadSoil() {
@@ -355,6 +341,20 @@ function sortStyle(type, typeOfSort) {
         }
     }
 }
+
+const socket = io('http://localhost:3000/', {
+    reconnectionDelayMax: 7000
+});
+
+socket.on("send_data", function (element1, element2, element3, element4, element5, element6, element7, element8) {
+    /*
+    console.log("Received : ");
+    console.log(element1);
+    console.log(element2);
+    */
+    loadLightChartData(element1, element2);
+    loadSoilChartData(element3, element4);
+});
 
 repeat = setInterval(() => {
     loader();

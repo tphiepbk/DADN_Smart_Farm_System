@@ -134,7 +134,27 @@ io.on("connection", socket => {
                 chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
             }
 
-            socket.emit("send_data", chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
+            var chartDataLight = [];
+            var labelDataLight = [];
+            var collection_light = db.collection('bk-iot-light');
+            const cursor_light = collection_light.find({}).sort({created_at : -1});
+            const allValues_light = await cursor_light.toArray(); 
+            for (var element of allValues_light) {
+                labelDataLight.push(element.created_at);
+                chartDataLight.push(JSON.parse(element.value).data);
+            }
+
+            var chartDataSoil = [];
+            var labelDataSoil = [];
+            var collection_soil = db.collection('bk-iot-soil');
+            const cursor_soil = collection_soil.find({}).sort({created_at : -1});
+            const allValues_soil = await cursor_soil.toArray(); 
+            for (var element of allValues_soil) {
+                labelDataSoil.push(element.created_at);
+                chartDataSoil.push(JSON.parse(element.value).data);
+            }
+
+            socket.emit("send_data", chartDataLight, labelDataLight, chartDataSoil, labelDataSoil, chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
 
             client.close();
         });
