@@ -75,4 +75,10 @@ router.get('/water_pump', ensureAuthenticated, (req, res) =>
   })
 );
 
+router.get('/prediction', ensureAuthenticated, (req, res) =>
+    res.render('prediction', {
+    user: req.user
+  })
+);
+
 module.exports = router;

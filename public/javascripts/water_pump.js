@@ -308,7 +308,24 @@ function loadChartData(chartDataWaterPumpRelay, labelDataWaterPumpRelay) {
 
                                 if (dateIndex == 0) {
                                     var d = new Date();
-                                    endOfTheDate = d.toISOString();
+                                    d = d.toISOString();
+
+                                    if (sortedLightByDay == true) {
+                                        if (d.substr(0, 10) == previousDate) {
+                                            endOfTheDate = d;
+                                        }
+                                    }
+                                    else if (sortedLightByMonth == true) {
+                                        if (d.substr(0, 7) == previousDate) {
+                                            endOfTheDate = d;
+                                        }
+                                    }
+                                    else {
+                                        if (d.substr(0, 4) == previousDate) {
+                                            endOfTheDate = d;
+                                        }
+                                    }
+
                                     console.log(endOfTheDate);
                                     console.log("Set end of the date to current datetime");
                                 }
@@ -415,7 +432,24 @@ function loadChartData(chartDataWaterPumpRelay, labelDataWaterPumpRelay) {
 
                             if (dateIndex == 0) {
                                 var d = new Date();
-                                endOfTheDate = d.toISOString();
+                                d = d.toISOString();
+
+                                if (sortedLightByDay == true) {
+                                    if (d.substr(0, 10) == previousDate) {
+                                        endOfTheDate = d;
+                                    }
+                                }
+                                else if (sortedLightByMonth == true) {
+                                    if (d.substr(0, 7) == previousDate) {
+                                        endOfTheDate = d;
+                                    }
+                                }
+                                else {
+                                    if (d.substr(0, 4) == previousDate) {
+                                        endOfTheDate = d;
+                                    }
+                                }
+
                                 console.log(endOfTheDate);
                                 console.log("Set end of the date to current datetime");
                             }
