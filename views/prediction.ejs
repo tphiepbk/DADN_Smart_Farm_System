@@ -42,14 +42,23 @@
                             <div class="card border-warning">
                                 <div class="card-body">
 
-                                    <p><strong class="card-text">Automatic mode</strong></p>
+                                    <p><strong class="card-text">Load model</strong></p>
+                                    <button type="button" onclick="loadData()" class="btn btn-info"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
+
+                                    <label for="fname">Soil value </label>
+                                    <input type="text" id="soil_value"><br><br>
+                                    <label for="lname">Light value </label>
+                                    <input type="text" id="light_value"><br><br>
+
+                                    <input type="submit" value="Submit Soil Data" onclick="proceedSoilData()">
+                                    <input type="submit" value="Submit Light Data" onclick="publishLightData()">
                                 </div>
                             </div>
 
                             <div class="card border-success" id="manual-switch" style="pointer-events: none; opacity: 0.5;">
                                 <div class="card-body">
 
-                                    <p><strong class="card-text">Switch</strong></p>
+                                    <p><strong class="card-text">Input</strong></p>
                                 </div>
                             </div>
 

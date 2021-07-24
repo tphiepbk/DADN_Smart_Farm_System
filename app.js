@@ -57,6 +57,9 @@ app.set("views", templatepath);
 // Express body parser
 app.use(express.urlencoded({ extended: true }));
 
+var cors = require('cors')
+app.use(cors())
+
 // Express session
 app.use(
     session({

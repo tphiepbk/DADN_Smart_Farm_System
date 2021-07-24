@@ -20,6 +20,12 @@
 ## AIO_Key
 * When the aio_key on AdaFruit server changes, just change the aio_key variable in file "public/javascripts/aio_key.js" and "db/get_data.js"
 
+## Bonus Feature
+* Open another VSCode editor in folder "flask_server", choose Python interpreter then run the server app
+* Smart farm system will send data to Flask server, Flask server will use model trained by Google Colab to predict the value
+
+<ins>***Note***</ins>: We have to install Flask (using pip) to run the server
+
 ## About
 
 ***Powered by FWB Team***:
@@ -32,6 +38,7 @@
 	+ Fetch data and turn on/off light system and water pump system automatically
 	+ Statistic feature
 	+ Notification feature
+	+ Bonus feature
 	+ Final report
 
 * Lam Thanh Huy - [lamhuy2214](https://github.com/lamhuy2214) : Login feature
