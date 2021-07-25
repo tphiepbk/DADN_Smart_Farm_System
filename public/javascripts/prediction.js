@@ -48,7 +48,7 @@ function reqListenerTempHumid() {
     obj.input = temp;
     var jsonString= JSON.stringify(obj);
 
-    const modelURL = "http://127.0.0.1:5000/model";
+    const modelURL = "http://127.0.0.1:5000/linear_regression";
     var modelXmlHttpReq = new XMLHttpRequest();
     modelXmlHttpReq.onload = reqListenerModel;
     modelXmlHttpReq.open("POST", modelURL, true);
@@ -60,6 +60,82 @@ function loadTempHumid() {
     tempHumidXmlHttpReq.onload = reqListenerTempHumid;
     tempHumidXmlHttpReq.open("GET", tempHumidUrl, true);
     tempHumidXmlHttpReq.send();
+}
+
+function insertRowsToTable(date_str, avgtemp_str, rainfall_str) {
+    var table = document.getElementById("tableOfPrediction");
+    var duplicate = false;
+
+
+    for (var i = 1, row; row = table.rows[i]; i++) {
+        var cellContent = row.cells[0].innerHTML;
+
+        if (cellContent == date_str) {
+            duplicate = true;
+        }
+    }
+
+    if (duplicate == false) {
+        var row = table.insertRow(table.length);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        
+        var textCell0 = document.createTextNode(date_str);
+        cell0.appendChild(textCell0);
+
+        var textCell1 = document.createTextNode(avgtemp_str);
+        cell1.appendChild(textCell1);
+
+        var textCell2 = document.createTextNode(rainfall_str);
+        cell2.appendChild(textCell2);
+    }
+}
+
+function reqListenerForecast() {
+    var res = JSON.parse(this.responseText);
+
+    var predictionsStr_rainfall = res.rainfall;
+    var predictionsStr_avgtemp = res.avgtemp;
+
+    var yearOfPrediction = res.year;
+
+    var predictedRainfall_arr = predictionsStr_rainfall.split(",");
+    predictedRainfall_arr.pop();
+
+    var predictedAvgTemp_arr = predictionsStr_avgtemp.split(",");
+    predictedAvgTemp_arr.pop();
+
+    console.log(predictedRainfall_arr);
+    console.log(predictedAvgTemp_arr);
+
+    for (var i = 0 ; i < predictedAvgTemp_arr.length ; i++) {
+
+        var rainfall = parseFloat(predictedRainfall_arr[i]);
+        rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
+
+        var avgtemp = parseFloat(predictedAvgTemp_arr[i]);
+        avgtemp = Math.round((avgtemp + Number.EPSILON) * 100) / 100;
+
+        insertRowsToTable((i+1%12).toString()+ '/' + yearOfPrediction.toString(), avgtemp.toString(), rainfall.toString());
+    }
+}
+
+function loadForecast() {
+
+    const d = new Date();
+
+    var obj = new Object();
+    obj.author = "tphiepbk";
+    obj.type  = "ARIMA";
+    obj.input = d.getFullYear();
+    var jsonString= JSON.stringify(obj);
+
+    const arimaUrl = "http://127.0.0.1:5000/arima";
+    var modelXmlHttpReq = new XMLHttpRequest();
+    modelXmlHttpReq.onload = reqListenerForecast;
+    modelXmlHttpReq.open("POST", arimaUrl, true);
+    modelXmlHttpReq.send(jsonString);
 }
 
 repeat = setInterval(() => {

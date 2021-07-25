@@ -108,7 +108,6 @@ function errorFunc(error) {
 io.on("connection", socket => {
 
     console.log("Connected to SocketIO successfully");
-    var element = "hello world";
 
     setInterval(() => {
 
@@ -157,12 +156,13 @@ io.on("connection", socket => {
                 chartDataSoil.push(JSON.parse(element.value).data);
             }
 
+            console.log("Sending data...");
             socket.emit("send_data", chartDataLight, labelDataLight, chartDataSoil, labelDataSoil, chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
 
             client.close();
         });
 
-    }, 3000);
+    }, 2000);
 });
 
 server.listen(port, () =>{

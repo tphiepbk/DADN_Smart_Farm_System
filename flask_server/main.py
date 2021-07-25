@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 cors = CORS(app)
 
-@app.route('/model', methods=['POST', 'GET'])
+@app.route('/linear_regression', methods=['POST', 'GET'])
 def process():
     if request.method == "POST":
         my_json = request.data.decode('utf8').replace("'", '"')
@@ -32,6 +32,41 @@ def process():
             author='tphiepbk',
             type='LinearRegression',
             result=result
+        )
+
+@app.route('/arima', methods=['POST', 'GET'])
+def arima():
+    if request.method == "POST":
+        my_json = request.data.decode('utf8').replace("'", '"')
+
+        jsonData = json.loads(my_json)
+
+        inputVar = jsonData['input']
+
+        infile_rainfall = open('ARIMA_rainfall.pkl', 'rb')
+        model_rainfall = pk.load(infile_rainfall)
+        infile_rainfall.close()
+        predictions, se, conf = model_rainfall.forecast((inputVar - 2020) * 12)
+        predictionsStr_rainfall = ""
+        for element in predictions:
+            predictionsStr_rainfall += (str(element) + ',')
+        print(predictionsStr_rainfall)
+
+        infile_avgtemp = open('ARIMA_avgtemp.pkl', 'rb')
+        model_avgtemp = pk.load(infile_avgtemp)
+        infile_avgtemp.close()
+        predictions, se, conf = model_avgtemp.forecast((inputVar - 2020) * 12)
+        predictionsStr_avgtemp = ""
+        for element in predictions:
+            predictionsStr_avgtemp += (str(element) + ',')
+        print(predictionsStr_avgtemp)
+
+        return jsonify (
+            author='tphiepbk',
+            type='ARIMA',
+            year=inputVar,
+            rainfall=predictionsStr_rainfall,
+            avgtemp=predictionsStr_avgtemp
         )
 
 @app.route("/")

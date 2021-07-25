@@ -59,20 +59,6 @@
 
                                 <div class="card-header"><strong>Prediction</strong></div>
 
-                                <!--
-                                <p><strong class="card-text">Load model</strong></p>
-                                <button type="button" onclick="loadData()" class="btn btn-info"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
-
-                                <label for="fname">Soil value </label>
-                                <input type="text" id="soil_value"><br><br>
-                                <label for="lname">Light value </label>
-                                <input type="text" id="light_value"><br><br>
-
-                                <input type="submit" value="Submit Soil Data" onclick="proceedSoilData()">
-                                <input type="submit" value="Submit Light Data" onclick="publishLightData()">
-                                -->
-
-
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-sm-4">
@@ -95,7 +81,23 @@
                     <div class="container-fluid">
                         <div class="card">
                             <div class="card-body">
-                                <p>hello</p>
+
+                                <button type="button" onclick="loadForecast()" class="btn btn-info"><span class="cil-bar-chart btn-icon mr-2"></span> Predict</button>
+
+                                <br><br>
+
+                                <table class="table table-borderless table-striped" id="tableOfPrediction">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Average Temperature (Celsius)</th>
+                                        <th scope="col">Rainfall (mm)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
                             </div>
                         </div>
                     </div>

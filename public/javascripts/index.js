@@ -10,8 +10,8 @@ var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.
 var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
 var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
 
-var repeat= null;
-var intervalTime = 3000;
+var repeat = null;
+var intervalTime = 2000;
 
 var ctxSoil = document.getElementById("soil_chart").getContext("2d");
 var soil_chart = new Chart(ctxSoil, {
@@ -314,18 +314,6 @@ function loadTempHumid() {
     tempHumidXmlHttpReq.send();
 }
 
-function loader() {
-    /*
-    loadRelay();
-    setTimeout(() => {
-        loadLight();
-    }, 1000);
-    */
-    loadSoil();
-    loadLight();
-    loadTempHumid();
-}
-
 function sortStyle(type, typeOfSort) {
     if (type == "light") {
         if (typeOfSort == "day") {
@@ -377,10 +365,14 @@ socket.on("send_data", function (element1, element2, element3, element4, element
     loadSoilChartData(element3, element4);
 });
 
+function loader() {
+    loadSoil();
+    loadLight();
+    loadTempHumid();
+}
+
 repeat = setInterval(() => {
     loader();
-    //loadRelay();
-    //loadLight();
 }, intervalTime);
 
 lowLightAlertHide();
