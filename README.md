@@ -6,6 +6,8 @@
 * Socket.io - version 4.1.2 (transfer data from server to client)
 * MongoDB - version 3.6.8 (database)
 * CoreUI - version 3.x (UI)
+* Flask - version 2.0.1 (machine learning server)
+* Google Colab (train machine learning model)
 
 ## Features
 * Turn on/off light system and water pump system automtically (based on the data fetched from database)
