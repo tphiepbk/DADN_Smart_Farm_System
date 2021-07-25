@@ -11,7 +11,7 @@ var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.js
 var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
 
 var repeat= null;
-var intervalTime = 2000;
+var intervalTime = 3000;
 
 var ctxSoil = document.getElementById("soil_chart").getContext("2d");
 var soil_chart = new Chart(ctxSoil, {

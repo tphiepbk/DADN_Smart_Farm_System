@@ -46,6 +46,7 @@ function upload(collectionName, data) {
 };
 
 function getData(collectionName,url) {
+    /*
     fetch(url)
     .then(data=>{return data.json()})
     .then(res=>{
@@ -57,6 +58,26 @@ function getData(collectionName,url) {
         //console.log(feedData);
         upload(collectionName, feedData);
     })
+    */
+    fetch(url)
+    .then(function(response) {
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+        // Read the response as json.
+        return response.json();
+    })
+    .then(function(responseAsJson) {
+        // Do stuff with the JSON
+        feedData = [];
+        for (var i = 0 ; i < responseAsJson.length ; i++) {
+            feedData.push(responseAsJson[i]);
+        }
+        upload(collectionName, feedData);
+    })
+    .catch(function(error) {
+        console.log('Looks like there was a problem: \n', error);
+    });        
 };
 
 module.exports = {

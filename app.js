@@ -162,7 +162,7 @@ io.on("connection", socket => {
             client.close();
         });
 
-    }, 1000);
+    }, 3000);
 });
 
 server.listen(port, () =>{
