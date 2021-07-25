@@ -7,6 +7,7 @@ var password    = aio_key;
 
 var topicSoil = "tphiepbk/feeds/bk-iot-soil";
 var topicLight = "tphiepbk/feeds/bk-iot-light";
+var topicTempHumid = "tphiepbk/feeds/bk-iot-temp-humid";
 
 var client;
 
@@ -35,6 +36,17 @@ function publishLightData () {
     client.send(topicLight, message);
 }
 
+function publishTempHumidData () {
+
+    var temp = parseFloat(document.getElementById('temp_value').value);
+    var humid = parseFloat(document.getElementById('humid_value').value);
+    var combined = temp.toString() + "-" + humid.toString();
+    console.log(combined);
+
+    var message = JSON.stringify({"id" : "7", "name": "TEMP-HUMID", "data" : combined , "unit" : "C-%"});
+    client.send(topicTempHumid, message);
+}
+
 function init() {
     console.log("Connecting...");
     client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
@@ -53,6 +65,7 @@ function init() {
 function onConnect() {
     client.subscribe(topicSoil);
     client.subscribe(topicLight);
+    client.subscribe(topicTempHumid);
     console.log("Connect successfully");
 }
 

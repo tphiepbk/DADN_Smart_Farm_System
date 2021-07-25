@@ -8,7 +8,9 @@ var chartdataLight = [];
 
 var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + aio_key;
 var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
+var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
 
+var repeat= null;
 var intervalTime = 2000;
 
 var ctxSoil = document.getElementById("soil_chart").getContext("2d");
@@ -294,6 +296,24 @@ function loadLight() {
     lightXmlHttpReq.send();
 }
 
+function reqListenerTempHumid() {
+    var res = JSON.parse(this.responseText);
+    var tempHumid = JSON.parse(res[0].value).data;
+
+    var temp = tempHumid.substr(0, tempHumid.indexOf('-'))
+    var humid = tempHumid.substr(tempHumid.indexOf('-') + 1, tempHumid.length)
+
+    document.getElementById("text-current-temp-value").innerHTML = temp;
+    document.getElementById("text-current-humid-value").innerHTML = humid;
+}
+
+function loadTempHumid() {
+    var tempHumidXmlHttpReq = new XMLHttpRequest();
+    tempHumidXmlHttpReq.onload = reqListenerTempHumid;
+    tempHumidXmlHttpReq.open("GET", tempHumidUrl, true);
+    tempHumidXmlHttpReq.send();
+}
+
 function loader() {
     /*
     loadRelay();
@@ -303,6 +323,7 @@ function loader() {
     */
     loadSoil();
     loadLight();
+    loadTempHumid();
 }
 
 function sortStyle(type, typeOfSort) {

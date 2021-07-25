@@ -35,31 +35,55 @@
                                 <div class="card-header"><strong>Current State</strong></div>
 
                                 <div class="card-body">
-                                    <p>Hello</p>
+
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-info b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Temperature (Celsius) </small><br>
+                                                <strong id="textCurrentTempValue" class="h4"></strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-danger b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Humidity (%)</small><br>
+                                                <strong id="textCurrentHumidValue" class="h4"></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
                             <div class="card border-warning">
+
+                                <div class="card-header"><strong>Prediction</strong></div>
+
+                                <!--
+                                <p><strong class="card-text">Load model</strong></p>
+                                <button type="button" onclick="loadData()" class="btn btn-info"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
+
+                                <label for="fname">Soil value </label>
+                                <input type="text" id="soil_value"><br><br>
+                                <label for="lname">Light value </label>
+                                <input type="text" id="light_value"><br><br>
+
+                                <input type="submit" value="Submit Soil Data" onclick="proceedSoilData()">
+                                <input type="submit" value="Submit Light Data" onclick="publishLightData()">
+                                -->
+
+
                                 <div class="card-body">
-
-                                    <p><strong class="card-text">Load model</strong></p>
-                                    <button type="button" onclick="loadData()" class="btn btn-info"><span class="cil-power-standby btn-icon mr-2"></span> Turn on</button>
-
-                                    <label for="fname">Soil value </label>
-                                    <input type="text" id="soil_value"><br><br>
-                                    <label for="lname">Light value </label>
-                                    <input type="text" id="light_value"><br><br>
-
-                                    <input type="submit" value="Submit Soil Data" onclick="proceedSoilData()">
-                                    <input type="submit" value="Submit Light Data" onclick="publishLightData()">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-primary b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Rainfall (mm)</small><br>
+                                                <strong id="predictedRainfall" class="h4"></strong>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="card border-success" id="manual-switch" style="pointer-events: none; opacity: 0.5;">
-                                <div class="card-body">
-
-                                    <p><strong class="card-text">Input</strong></p>
-                                </div>
                             </div>
 
                         </div>
