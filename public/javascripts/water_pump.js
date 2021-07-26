@@ -310,12 +310,12 @@ function loadChartData(chartDataWaterPumpRelay, labelDataWaterPumpRelay) {
                                     var d = new Date();
                                     d = d.toISOString();
 
-                                    if (sortedLightByDay == true) {
+                                    if (sortedWaterPumpByDay == true) {
                                         if (d.substr(0, 10) == previousDate) {
                                             endOfTheDate = d;
                                         }
                                     }
-                                    else if (sortedLightByMonth == true) {
+                                    else if (sortedWaterPumpByMonth == true) {
                                         if (d.substr(0, 7) == previousDate) {
                                             endOfTheDate = d;
                                         }
