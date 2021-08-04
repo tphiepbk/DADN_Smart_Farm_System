@@ -7,7 +7,7 @@ const MongoClient = require("mongodb").MongoClient;
 //const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
 const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
 
-const global_aio_key = "aio_MmoX84lBEoBlipQuXKDNnd37HrLA";
+const global_aio_key = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
 
 // ADA Fruit devices
 const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=" + global_aio_key;

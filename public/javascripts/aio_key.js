@@ -1,4 +1,4 @@
 function getAIOKey() {
-    var global_aio_key = "aio_MmoX84lBEoBlipQuXKDNnd37HrLA";
+    var global_aio_key = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
     return global_aio_key;
 }
