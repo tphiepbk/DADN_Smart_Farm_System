@@ -14,14 +14,15 @@ const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-li
 const light_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + global_aio_key;
 const soil_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + global_aio_key;
 const water_pump_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + global_aio_key;
+const temp_humid_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + global_aio_key;
 
 /*
 const light_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data"
 const light_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data"
 const soil_url = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data"
 const water_pump_relay_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data"
+const temp_humid_url = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data"
 */
-
 
 function upload(collectionName, data) {
     MongoClient.connect(connectionString, function(err, client) {
@@ -87,6 +88,7 @@ module.exports = {
         getData('bk-iot-soil', soil_url);
         getData('bk-iot-light-relay', light_relay_url);
         getData('bk-iot-water-pump-relay', water_pump_relay_url);
+        getData('bk-iot-temp-humid', temp_humid_url);
     }
 };
 
