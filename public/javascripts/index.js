@@ -1,4 +1,5 @@
-const aio_key = getAIOKey();
+const demo_aio_key = getDemoAIOKey();
+const my_aio_key = getMyAIOKey();
 
 var labeldataSoil = [];
 var chartdataSoil = [];
@@ -6,9 +7,16 @@ var chartdataSoil = [];
 var labeldataLight = [];
 var chartdataLight = [];
 
+/*
 var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + aio_key;
 var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
 var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
+*/
+
+// * Final demo
+const lightUrl =     "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + demo_aio_key;
+const soilUrl =      "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=" + demo_aio_key;
+const tempHumidUrl = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + demo_aio_key;
 
 var repeat = null;
 var intervalTime = 2000;

@@ -1,18 +1,30 @@
-const aio_key = getAIOKey();
+const demo_aio_key = getDemoAIOKey();
+const my_aio_key = getMyAIOKey();
 
 var port = 443;
 var host = "io.adafruit.com";
-var username = "tphiepbk";
-var password = aio_key;
 
+// * Final demo
+/*
+var username = "tphiepbk";
+var password = my_aio_key;
 var topic = "tphiepbk/feeds/bk-iot-light-relay";
+*/
+var username = "CSE_BBC1";
+var password = demo_aio_key;
+var topic = "CSE_BBC1/feeds/bk-iot-relay";
 
 var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
 var messageOff = JSON.stringify({ "id": "11", "name": "RELAY", "data": "0", "unit": "" });
 
+/*
 var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=" + aio_key;
-
 var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + aio_key;
+*/
+
+// * Final demo
+const lightUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + demo_aio_key;
+const relayUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
