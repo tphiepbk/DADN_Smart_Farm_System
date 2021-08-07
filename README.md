@@ -26,8 +26,12 @@
 * Open another VSCode editor in folder "flask_server", choose Python interpreter then run the server app
 * Smart farm system will send data to Flask server, Flask server will use model trained by Google Colab to predict the value
 
-<ins>***Note***</ins>: We have to install Flask (using pip) to run the server
+<ins>***Note***</ins>: To run the Prediction server, we have to install the following packages (using pip):
 
+* flask
+* flask_cors
+* sklearn
+* statsmodels
 ## About
 
 ***Powered by FWB Team***:
