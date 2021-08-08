@@ -1,17 +1,16 @@
-const demo_aio_key = getDemoAIOKey();
-const my_aio_key = getMyAIOKey();
-
 var port = 443;
 var host = "io.adafruit.com";
 
 // * Final demo
 /*
 var username = "tphiepbk";
-var password = my_aio_key;
+var password = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
 var topic = "tphiepbk/feeds/bk-iot-light-relay";
 */
+
 var username = "CSE_BBC1";
-var password = demo_aio_key;
+//var password = "CSE@2021";
+var password    = "aio_GOii70J59sAf8pkCYFQzT9q6SIXk";
 var topic = "CSE_BBC1/feeds/bk-iot-relay";
 
 var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
@@ -23,8 +22,12 @@ var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.
 */
 
 // * Final demo
+/*
 const lightUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + demo_aio_key;
 const relayUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
+*/
+const lightUrl = get_lightUrl();
+const relayUrl = get_lightRelayUrl();
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
@@ -516,7 +519,12 @@ function reqListenerRelay() {
     var res = JSON.parse(this.responseText);
 
     for (var i = 0 ; i < res.length ; i++) {
-        chartDataLightRelay.push(JSON.parse(res[i].value).data);
+        try {
+            chartDataLightRelay.push(JSON.parse(res[i].value).data);
+        }
+        catch(e) {
+
+        }
         labelDataLightRelay.push(res[i].created_at);
     }
 
@@ -540,7 +548,12 @@ function reqListenerLight() {
     var res = JSON.parse(this.responseText);
 
     for (var i = 0 ; i < res.length ; i++) {
-        chartDataLight.push(JSON.parse(res[i].value).data);
+        try {
+            chartDataLight.push(JSON.parse(res[i].value).data);
+        }
+        catch(e) {
+
+        }
     }
 
     console.log('chart data light:', chartDataLight);

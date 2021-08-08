@@ -1,8 +1,7 @@
-const demo_aio_key = getDemoAIOKey();
 //var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
 
 // * Final demo
-const tempHumidUrl = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + demo_aio_key;
+const tempHumidUrl = get_tempHumidUrl();
 
 var repeat = null;
 var intervalTime = 3000;

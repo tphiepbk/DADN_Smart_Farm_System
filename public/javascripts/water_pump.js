@@ -1,18 +1,17 @@
-const demo_aio_key = getDemoAIOKey();
-const my_aio_key = getMyAIOKey();
-
 var port        = 443;
 var host        = "io.adafruit.com";
 
 // * Final demo
-/*
 var username    = "tphiepbk";
-var password    = my_aio_key;
+var password    = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
 var topic = "tphiepbk/feeds/bk-iot-water-pump-relay";
-*/
+
+/*
 var username    = "CSE_BBC1";
-var password    = demo_aio_key;
+//var password    = "CSE@2021";
+var password    = "aio_GOii70J59sAf8pkCYFQzT9q6SIXk";
 var topic = "CSE_BBC1/feeds/bk-iot-relay";
+*/
 
 var messageOn = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "1" , "unit" : ""});
 var messageOff = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "0" , "unit" : ""});
@@ -22,9 +21,13 @@ var messageOff = JSON.stringify({"id" : "11", "name": "RELAY", "data" : "0" , "u
 var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + aio_key;
 var soilUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + aio_key;
 */
+/*
 const soilUrl = "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=" + demo_aio_key;
 const relayUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
 //const relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + my_aio_key;
+*/
+const soilUrl = get_soilUrl();
+const relayUrl = get_waterPumpRelayUrl();
 
 var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
 
@@ -446,12 +449,12 @@ function loadChartData(chartDataWaterPumpRelay, labelDataWaterPumpRelay) {
                                 var d = new Date();
                                 d = d.toISOString();
 
-                                if (sortedLightByDay == true) {
+                                if (sortedWaterPumpByDay == true) {
                                     if (d.substr(0, 10) == previousDate) {
                                         endOfTheDate = d;
                                     }
                                 }
-                                else if (sortedLightByMonth == true) {
+                                else if (sortedWaterPumpByMonth == true) {
                                     if (d.substr(0, 7) == previousDate) {
                                         endOfTheDate = d;
                                     }
@@ -513,7 +516,12 @@ function reqListenerRelay() {
     var res = JSON.parse(this.responseText);
 
     for (var i = 0 ; i < res.length ; i++) {
-        chartDataWaterPumpRelay.push(JSON.parse(res[i].value).data);
+        try {
+            chartDataWaterPumpRelay.push(JSON.parse(res[i].value).data);
+        }
+        catch(e) {
+
+        }
         labelDataWaterPumpRelay.push(res[i].created_at);
     }
 
@@ -537,7 +545,12 @@ function reqListenerSoil() {
     var res = JSON.parse(this.responseText);
 
     for (var i = 0 ; i < res.length ; i++) {
-        chartDataSoil.push(JSON.parse(res[i].value).data);
+        try {
+            chartDataSoil.push(JSON.parse(res[i].value).data);
+        }
+        catch (e) {
+
+        }
     }
 
     console.log('chart data light:', chartDataSoil);

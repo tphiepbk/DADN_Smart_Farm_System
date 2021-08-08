@@ -7,7 +7,8 @@ const MongoClient = require("mongodb").MongoClient;
 //const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
 const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
 
-const demo_aio_key = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
+const CSE_BBC = "aio_eIzx84QrfGct3jkJM5aW02aKAIbB";
+const CSE_BBC1 = "aio_GOii70J59sAf8pkCYFQzT9q6SIXk";
 const my_aio_key = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
 
 /*
@@ -20,15 +21,15 @@ const temp_humid_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-tem
 */
 
 // * For the final demo
-const light_relay_url =         "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
+const light_relay_url =         "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + CSE_BBC1;
 
 //const water_pump_relay_url =    "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
 const water_pump_relay_url =    "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + my_aio_key;
 
-const light_url =               "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + demo_aio_key;
+const light_url =               "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + CSE_BBC1;
 
-const soil_url =                "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=" + demo_aio_key;
-const temp_humid_url =          "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + demo_aio_key;
+const soil_url =                "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=" + CSE_BBC;
+const temp_humid_url =          "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + CSE_BBC;
 
 function upload(collectionName, data) {
     MongoClient.connect(connectionString, function(err, client) {
@@ -36,7 +37,7 @@ function upload(collectionName, data) {
         if (err) throw err;
         assert.equal(null, err);
 
-        const db = client.db('bk-iot-test');
+        const db = client.db('bk-iot');
 
         // Use index to prevent duplicate
         db.collection(collectionName).createIndex({"id":1}, {unique: true});

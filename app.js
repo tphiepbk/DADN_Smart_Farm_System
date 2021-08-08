@@ -122,8 +122,13 @@ io.on("connection", socket => {
             const cursor_light_relay = collection_light_relay.find({}).sort({created_at : -1});
             const allValues_light_relay = await cursor_light_relay.toArray(); 
             for (var element of allValues_light_relay) {
+
+                try {
+                    chartDataLightRelay.push(JSON.parse(element.value).data);
+                } catch (e) {
+                }
+
                 labelDataLightRelay.push(element.created_at);
-                chartDataLightRelay.push(JSON.parse(element.value).data);
             }
 
             var chartDataWaterPumpRelay = [];
@@ -133,7 +138,11 @@ io.on("connection", socket => {
             const allValues_water_pump_relay = await cursor_water_pump_relay.toArray(); 
             for (var element of allValues_water_pump_relay) {
                 labelDataWaterPumpRelay.push(element.created_at);
-                chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
+                try {
+                    chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
+                }
+                catch (e) {
+                }
             }
 
             var chartDataLight = [];
@@ -143,7 +152,12 @@ io.on("connection", socket => {
             const allValues_light = await cursor_light.toArray(); 
             for (var element of allValues_light) {
                 labelDataLight.push(element.created_at);
-                chartDataLight.push(JSON.parse(element.value).data);
+                try {
+                    chartDataLight.push(JSON.parse(element.value).data);
+                }
+                catch (e){
+
+                }
             }
 
             var chartDataSoil = [];
@@ -153,7 +167,12 @@ io.on("connection", socket => {
             const allValues_soil = await cursor_soil.toArray(); 
             for (var element of allValues_soil) {
                 labelDataSoil.push(element.created_at);
-                chartDataSoil.push(JSON.parse(element.value).data);
+                try {
+                    chartDataSoil.push(JSON.parse(element.value).data);
+                }
+                catch (e){
+
+                }
             }
 
             console.log("Sending data...");
