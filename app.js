@@ -2,35 +2,48 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
-const expressLayouts = require('express-ejs-layouts');
-const passport = require('passport');
+// const expressLayouts = require('express-ejs-layouts');
+// const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
-const assert = require('assert');
-const fetch = require("node-fetch");
+// const assert = require('assert');
+// const fetch = require("node-fetch");
 
-const User = require("./models/User");
-const { compareSync } = require("bcryptjs");
+// const User = require("./models/User");
+// const { compareSync } = require("bcryptjs");
 
 // * Automatically get data from URL to MongoDB
 const dataLoader = require("./db/get_data");
 
 // Passport Config
-require('./config/passport')(passport);
+// require('./config/passport')(passport);
 
 // DB Config
-mongoose.connect("mongodb+srv://Banvoiloiich:123@cluster0.b4qy2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-})
-.then(() => {
-    console.log("Connected to mongodb cloud (credential database) !");
-})
-.catch((err) => {
-    console.log(err);
-});
+// mongoose.connect("mongodb+srv://Banvoiloiich:123@cluster0.b4qy2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+//     useFindAndModify: false,
+// })
+// .then(() => {
+//     console.log("Connected to mongodb cloud (credential database) !");
+// })
+// .catch((err) => {
+//     console.log(err);
+// });
+
+// mongoose.connect("mongodb+srv://tphiepbk:tph-2992@cluster0.bjhqp.mongodb.net/de-smart-farm?retryWrites=true&w=majority", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+//     useFindAndModify: false,
+// })
+// .then(() => {
+//     console.log("Connected to mongodb cloud (credential database) !");
+// })
+// .catch((err) => {
+//     console.log(err);
+// });
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -70,8 +83,8 @@ app.use(
 );
 
 // Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // Connect flash
 app.use(flash());
@@ -86,7 +99,7 @@ app.use(function(req, res, next) {
 
 // Routes
 app.use('/', require('./routes/index.js'));
-app.use('/', require('./routes/users.js'));
+// app.use('/', require('./routes/users.js'));
 
 /*
 setInterval(() => {
@@ -95,7 +108,7 @@ setInterval(() => {
 */
 
 const MongoClient = require('mongodb').MongoClient;
-const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
+const connectionString = "mongodb+srv://tphiepbk:tph-2992@cluster0.bjhqp.mongodb.net/de-smart-farm?retryWrites=true&w=majority";
 
 function iterateFunc(doc) {
     console.log(JSON.stringify(doc, null, 4));
@@ -105,83 +118,148 @@ function errorFunc(error) {
     console.log(error);
 };
 
-io.on("connection", socket => {
+io.on("connection", async (socket) => {
+
+    const onDataLoaderFinish = async (resolve) => {
+      console.log("onDataLoaderFinish is running");
+      MongoClient.connect(connectionString, async (err, client) => {
+        if (err) throw err;
+
+        const db = client.db("de-smart-farm");
+
+        const chartDataLightRelay = [];
+        const labelDataLightRelay = [];
+        const collection_light_relay = db.collection('light-relay');
+        const cursor_light_relay = collection_light_relay.find({}).sort({created_at : -1});
+        const allValues_light_relay = await cursor_light_relay.toArray(); 
+        for (let element of allValues_light_relay) {
+            chartDataLightRelay.push(element.value);
+            labelDataLightRelay.push(element.created_at);
+        }
+
+        const chartDataWaterPumpRelay = [];
+        const labelDataWaterPumpRelay = [];
+        const collection_water_pump_relay = db.collection('water-pump-relay');
+        const cursor_water_pump_relay = collection_water_pump_relay.find({}).sort({created_at : -1});
+        const allValues_water_pump_relay = await cursor_water_pump_relay.toArray(); 
+        for (let element of allValues_water_pump_relay) {
+          labelDataWaterPumpRelay.push(element.created_at);
+          chartDataWaterPumpRelay.push(element.value);
+        }
+
+        const chartDataLight = [];
+        const labelDataLight = [];
+        const collection_light = db.collection('light-sensor');
+        const cursor_light = collection_light.find({}).sort({created_at : -1});
+        const allValues_light = await cursor_light.toArray(); 
+        for (let element of allValues_light) {
+            chartDataLight.push(element.value)
+            labelDataLight.push(element.created_at)
+        }
+
+        const chartDataSoil = [];
+        const labelDataSoil = [];
+        const collection_soil = db.collection('soil-humidity-sensor');
+        const cursor_soil = collection_soil.find({}).sort({created_at : -1});
+        const allValues_soil = await cursor_soil.toArray(); 
+        for (let element of allValues_soil) {
+          chartDataSoil.push(element.value);
+          labelDataSoil.push(element.created_at);
+        }
+
+        console.log("Sending data...");
+        socket.emit("send_data", chartDataLight, labelDataLight, chartDataSoil, labelDataSoil, chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
+
+        client.close();
+
+        resolve("DONE")
+      });
+    }
 
     console.log("Connected to SocketIO successfully");
 
-    setInterval(() => {
+    while (true) {
+      const loaderPromise = new Promise((resolve, reject) => {
+        dataLoader.fullLoader(() => {onDataLoaderFinish(resolve)})
+      });
+      const result = await loaderPromise;
+      console.log(`Result = ${result}`)
+    }
 
-        dataLoader.fullLoader();
+    // setInterval(() => {
+    //   console.log("Retrieving data...")
+    //   dataLoader.fullLoader(onDataLoaderFinish);
+    // }, 4000);
 
-        MongoClient.connect(connectionString, async function(err, client) {
-            const db = client.db("bk-iot");
+    // setInterval(() => {
+      // MongoClient.connect(connectionString, async (err, client) => {
+          // const db = client.db("bk-iot");
 
-            var chartDataLightRelay = [];
-            var labelDataLightRelay = [];
-            var collection_light_relay = db.collection('bk-iot-light-relay');
-            const cursor_light_relay = collection_light_relay.find({}).sort({created_at : -1});
-            const allValues_light_relay = await cursor_light_relay.toArray(); 
-            for (var element of allValues_light_relay) {
+          // const chartDataLightRelay = [];
+          // const labelDataLightRelay = [];
+          // const collection_light_relay = db.collection('bk-iot-light-relay');
+          // const cursor_light_relay = collection_light_relay.find({}).sort({created_at : -1});
+          // const allValues_light_relay = await cursor_light_relay.toArray(); 
+          // for (let element of allValues_light_relay) {
+              // try {
+                // chartDataLightRelay.push(JSON.parse(element.value).data);
+              // } catch (e) {
+                // console.log(`Error while reading light relay data: ${e}`);
+              // }
+              // labelDataLightRelay.push(element.created_at);
+          // }
 
-                try {
-                    chartDataLightRelay.push(JSON.parse(element.value).data);
-                } catch (e) {
-                }
+          // var chartDataWaterPumpRelay = [];
+          // var labelDataWaterPumpRelay = [];
+          // var collection_water_pump_relay = db.collection('bk-iot-water-pump-relay');
+          // const cursor_water_pump_relay = collection_water_pump_relay.find({}).sort({created_at : -1});
+          // const allValues_water_pump_relay = await cursor_water_pump_relay.toArray(); 
+          // for (var element of allValues_water_pump_relay) {
+              // labelDataWaterPumpRelay.push(element.created_at);
+              // try {
+                  // chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
+              // }
+              // catch (e) {
+              // }
+          // }
 
-                labelDataLightRelay.push(element.created_at);
-            }
+          // var chartDataLight = [];
+          // var labelDataLight = [];
+          // var collection_light = db.collection('bk-iot-light');
+          // const cursor_light = collection_light.find({}).sort({created_at : -1});
+          // const allValues_light = await cursor_light.toArray(); 
+          // for (var element of allValues_light) {
+              // labelDataLight.push(element.created_at);
+              // try {
+                  // chartDataLight.push(JSON.parse(element.value).data);
+              // }
+              // catch (e){
 
-            var chartDataWaterPumpRelay = [];
-            var labelDataWaterPumpRelay = [];
-            var collection_water_pump_relay = db.collection('bk-iot-water-pump-relay');
-            const cursor_water_pump_relay = collection_water_pump_relay.find({}).sort({created_at : -1});
-            const allValues_water_pump_relay = await cursor_water_pump_relay.toArray(); 
-            for (var element of allValues_water_pump_relay) {
-                labelDataWaterPumpRelay.push(element.created_at);
-                try {
-                    chartDataWaterPumpRelay.push(JSON.parse(element.value).data);
-                }
-                catch (e) {
-                }
-            }
+              // }
+          // }
 
-            var chartDataLight = [];
-            var labelDataLight = [];
-            var collection_light = db.collection('bk-iot-light');
-            const cursor_light = collection_light.find({}).sort({created_at : -1});
-            const allValues_light = await cursor_light.toArray(); 
-            for (var element of allValues_light) {
-                labelDataLight.push(element.created_at);
-                try {
-                    chartDataLight.push(JSON.parse(element.value).data);
-                }
-                catch (e){
+          // var chartDataSoil = [];
+          // var labelDataSoil = [];
+          // var collection_soil = db.collection('bk-iot-soil');
+          // const cursor_soil = collection_soil.find({}).sort({created_at : -1});
+          // const allValues_soil = await cursor_soil.toArray(); 
+          // for (var element of allValues_soil) {
+              // labelDataSoil.push(element.created_at);
+              // try {
+                  // chartDataSoil.push(JSON.parse(element.value).data);
+              // }
+              // catch (e){
 
-                }
-            }
+              // }
+          // }
 
-            var chartDataSoil = [];
-            var labelDataSoil = [];
-            var collection_soil = db.collection('bk-iot-soil');
-            const cursor_soil = collection_soil.find({}).sort({created_at : -1});
-            const allValues_soil = await cursor_soil.toArray(); 
-            for (var element of allValues_soil) {
-                labelDataSoil.push(element.created_at);
-                try {
-                    chartDataSoil.push(JSON.parse(element.value).data);
-                }
-                catch (e){
+          // console.log("Sending data...");
+          // socket.emit("send_data", chartDataLight, labelDataLight, chartDataSoil, labelDataSoil, chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
 
-                }
-            }
+          // client.close();
+      // });
 
-            console.log("Sending data...");
-            socket.emit("send_data", chartDataLight, labelDataLight, chartDataSoil, labelDataSoil, chartDataLightRelay, labelDataLightRelay, chartDataWaterPumpRelay, labelDataWaterPumpRelay);
-
-            client.close();
-        });
-
-    }, 2000);
+    // }, 4000);
 });
 
 server.listen(port, () =>{
