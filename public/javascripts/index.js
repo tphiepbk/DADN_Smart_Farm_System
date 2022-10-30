@@ -13,13 +13,13 @@ var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-hu
 // * Final demo
 const lightUrl = get_lightUrl();
 const soilUrl = get_soilUrl();
-const tempHumidUrl = get_tempHumidUrl();
+const humidUrl = get_humidUrl();
+const tempUrl = get_tempUrl();
 
-var repeat = null;
-var intervalTime = 2000;
+const intervalTime = 2000;
 
-var ctxSoil = document.getElementById("soil_chart").getContext("2d");
-var soil_chart = new Chart(ctxSoil, {
+const ctxSoil = document.getElementById("soil_chart").getContext("2d");
+const soil_chart = new Chart(ctxSoil, {
     data: {
         labels: [],
         datasets: [
@@ -63,8 +63,8 @@ var soil_chart = new Chart(ctxSoil, {
     }
 });
 
-var ctxLight = document.getElementById("light_chart").getContext("2d");
-var light_chart = new Chart(ctxLight, {
+const ctxLight = document.getElementById("light_chart").getContext("2d");
+const light_chart = new Chart(ctxLight, {
     data: {
         labels: [],
         datasets: [
@@ -108,11 +108,11 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
-var sortedLightByDay = true;
-var sortedLightByMonth = false;
-var sortedLightByYear = false;
+let sortedLightByDay = true;
+let sortedLightByMonth = false;
+let sortedLightByYear = false;
 
-function loadLightChartData(chartDataLight, labelDataLight) {
+const loadLightChartData = (chartDataLight, labelDataLight) => {
     console.log('chart data light :', chartDataLight);
     console.log('label data light :', labelDataLight);
 
@@ -124,10 +124,10 @@ function loadLightChartData(chartDataLight, labelDataLight) {
     var chartDataLightDate_latestValue = [];
 
     var lightValueOfDay = [];
-    
+
     var sumLightValueOfDay = 0;
 
-    for (var i = 0 ; i < labelDataLight.length ; i++) {
+    for (let i = 0 ; i < labelDataLight.length ; i++) {
 
         var currentDate = null;
         if (sortedLightByDay == true) {
@@ -193,16 +193,11 @@ function loadLightChartData(chartDataLight, labelDataLight) {
     light_chart.update(); 
 }
 
-function reqListenerLight() {
-    var res = JSON.parse(this.responseText);
-    document.getElementById("text-current-light-value").innerHTML = JSON.parse(res[0].value).data;
-}
+let sortedSoilByDay = true;
+let sortedSoilByMonth = false;
+let sortedSoilByYear = false;
 
-var sortedSoilByDay = true;
-var sortedSoilByMonth = false;
-var sortedSoilByYear = false;
-
-function loadSoilChartData(chartDataSoil, labelDataSoil) {
+const loadSoilChartData = (chartDataSoil, labelDataSoil) => {
     console.log('chart data soil :', chartDataSoil);
     console.log('label data soil :', labelDataSoil);
 
@@ -214,7 +209,7 @@ function loadSoilChartData(chartDataSoil, labelDataSoil) {
     var chartDataSoilDate_latestValue = [];
 
     var soilValueOfDay = [];
-    
+
     var sumSoilValueOfDay = 0;
 
     for (var i = 0 ; i < labelDataSoil.length ; i++) {
@@ -283,101 +278,100 @@ function loadSoilChartData(chartDataSoil, labelDataSoil) {
     soil_chart.update(); 
 }
 
-function reqListenerSoil() {
-    var res = JSON.parse(this.responseText);
-    document.getElementById("text-current-soil-value").innerHTML = JSON.parse(res[0].value).data;
-}
-
-function loadSoil() {
-    var soilXmlHttpReq = new XMLHttpRequest();
-    soilXmlHttpReq.onload = reqListenerSoil;
+const loadSoil = () => {
+    const soilXmlHttpReq = new XMLHttpRequest();
+    soilXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(soilXmlHttpReq.responseText);
+      document.getElementById("text-current-soil-value").innerHTML = res[0].value;
+    })
     soilXmlHttpReq.open("GET", soilUrl, true);
     soilXmlHttpReq.send();
 }
-function loadLight() {
-    var lightXmlHttpReq = new XMLHttpRequest();
-    lightXmlHttpReq.onload = reqListenerLight;
+const loadLight = () => {
+    const lightXmlHttpReq = new XMLHttpRequest();
+    lightXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(lightXmlHttpReq.responseText);
+      document.getElementById("text-current-light-value").innerHTML = res[0].value;
+    })
     lightXmlHttpReq.open("GET", lightUrl, true);
     lightXmlHttpReq.send();
 }
 
-function reqListenerTempHumid() {
-    var res = JSON.parse(this.responseText);
-    var tempHumid = JSON.parse(res[0].value).data;
-
-    var temp = tempHumid.substr(0, tempHumid.indexOf('-'))
-    var humid = tempHumid.substr(tempHumid.indexOf('-') + 1, tempHumid.length)
-
-    document.getElementById("text-current-temp-value").innerHTML = temp;
-    document.getElementById("text-current-humid-value").innerHTML = humid;
+const loadTemp = () => {
+    var tempXmlHttpReq = new XMLHttpRequest();
+    tempXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(tempXmlHttpReq.responseText);
+      document.getElementById("text-current-temp-value").innerHTML = res[0].value;
+    })
+    tempXmlHttpReq.open("GET", tempUrl, true);
+    tempXmlHttpReq.send();
 }
 
-function loadTempHumid() {
-    var tempHumidXmlHttpReq = new XMLHttpRequest();
-    tempHumidXmlHttpReq.onload = reqListenerTempHumid;
-    tempHumidXmlHttpReq.open("GET", tempHumidUrl, true);
-    tempHumidXmlHttpReq.send();
+const loadHumid = () => {
+    var humidXmlHttpReq = new XMLHttpRequest();
+    humidXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(humidXmlHttpReq.responseText);
+      document.getElementById("text-current-humid-value").innerHTML = res[0].value;
+    })
+    humidXmlHttpReq.open("GET", humidUrl, true);
+    humidXmlHttpReq.send();
 }
 
-function sortStyle(type, typeOfSort) {
-    if (type == "light") {
-        if (typeOfSort == "day") {
-            sortedLightByDay = true;
-            sortedLightByMonth = false;
-            sortedLightByYear = false;
-        }
-        else if (typeOfSort == "month") {
-            sortedLightByDay = false;
-            sortedLightByMonth = true;
-            sortedLightByYear = false;
-        }
-        else {
-            sortedLightByDay = false;
-            sortedLightByMonth = false;
-            sortedLightByYear = true;
-        }
+const sortStyle = (type, typeOfSort) => {
+  if (type == "light") {
+    if (typeOfSort == "day") {
+      sortedLightByDay = true;
+      sortedLightByMonth = false;
+      sortedLightByYear = false;
+    }
+    else if (typeOfSort == "month") {
+      sortedLightByDay = false;
+      sortedLightByMonth = true;
+      sortedLightByYear = false;
     }
     else {
-        if (typeOfSort == "day") {
-            sortedSoilByDay = true;
-            sortedSoilByMonth = false;
-            sortedSoilByYear = false;
-        }
-        else if (typeOfSort == "month") {
-            sortedSoilByDay = false;
-            sortedSoilByMonth = true;
-            sortedSoilByYear = false;
-        }
-        else {
-            sortedSoilByDay = false;
-            sortedSoilByMonth = false;
-            sortedSoilByYear = true;
-        }
+      sortedLightByDay = false;
+      sortedLightByMonth = false;
+      sortedLightByYear = true;
     }
+  }
+  else {
+    if (typeOfSort == "day") {
+      sortedSoilByDay = true;
+      sortedSoilByMonth = false;
+      sortedSoilByYear = false;
+    }
+    else if (typeOfSort == "month") {
+      sortedSoilByDay = false;
+      sortedSoilByMonth = true;
+      sortedSoilByYear = false;
+    }
+    else {
+      sortedSoilByDay = false;
+      sortedSoilByMonth = false;
+      sortedSoilByYear = true;
+    }
+  }
 }
 
 const socket = io('http://localhost:3000/', {
     reconnectionDelayMax: 7000
 });
 
-socket.on("send_data", function (element1, element2, element3, element4, element5, element6, element7, element8) {
-    /*
-    console.log("Received : ");
-    console.log(element1);
-    console.log(element2);
-    */
+socket.on("send_data", (element1, element2, element3, element4, element5, element6, element7, element8) => {
     loadLightChartData(element1, element2);
     loadSoilChartData(element3, element4);
 });
 
-function loader() {
-    loadSoil();
-    loadLight();
-    loadTempHumid();
+const loader = () => {
+  loadSoil();
+  loadLight();
+  loadTemp();
+  loadHumid();
 }
 
-repeat = setInterval(() => {
-    loader();
+const repeat = setInterval(() => {
+  loader();
 }, intervalTime);
 
 lowLightAlertHide();
@@ -385,9 +379,10 @@ highLightAlertHide();
 lowSoilAlertHide();
 highSoilAlertHide();
 
-window.setInterval(updateClock, 1000);
-function updateClock() {
-    var d = new Date();
+const updateClock = () => {
+    const d = new Date();
     document.getElementById("time").innerHTML = d.toLocaleTimeString();
     document.getElementById("date").innerHTML = d.toLocaleDateString("vi-VN");
 }
+
+window.setInterval(updateClock, 1000);

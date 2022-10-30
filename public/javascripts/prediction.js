@@ -1,17 +1,17 @@
 //var tempHumidUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + aio_key;
 
 // * Final demo
-const tempHumidUrl = get_tempHumidUrl();
+const tempUrl = get_tempUrl();
+const humidUrl = get_humidUrl();
 
-var repeat = null;
-var intervalTime = 3000;
+const intervalTime = 3000;
 
-function reqListenerModel() {
-    var res = JSON.parse(this.responseText);
-    var rainfall = parseFloat(res.result);
-    rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
-    console.log(rainfall);
-    document.getElementById("predictedRainfall").innerHTML = rainfall.toString();
+const reqListenerModel = () => {
+  const res = JSON.parse(reqListenerModel.responseText);
+  const rainfall = parseFloat(res.result);
+  rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
+  console.log(rainfall);
+  document.getElementById("predictedRainfall").innerHTML = rainfall.toString();
 }
 
 /*
@@ -34,112 +34,147 @@ function proceedSoilData () {
 }
 */
 
-function reqListenerTempHumid() {
-    var res = JSON.parse(this.responseText);
-    var tempHumid = JSON.parse(res[0].value).data;
+const loadTempHumid = () => {
+  const tempXmlHttpReq = new XMLHttpRequest();
+  tempXmlHttpReq.addEventListener("load", () => {
+    const res = JSON.parse(tempXmlHttpReq.responseText);
 
-    var temp = tempHumid.substr(0, tempHumid.indexOf('-'))
-    var humid = tempHumid.substr(tempHumid.indexOf('-') + 1, tempHumid.length)
+    document.getElementById("textCurrentTempValue").innerHTML = res[0].value
+    // document.getElementById("textCurrentHumidValue").innerHTML = humid;
 
-    document.getElementById("textCurrentTempValue").innerHTML = temp;
-    document.getElementById("textCurrentHumidValue").innerHTML = humid;
-
-    var obj = new Object();
+    const obj = new Object();
     obj.author = "tphiepbk";
     obj.type  = "LinearRegression";
-    obj.input = temp;
-    var jsonString= JSON.stringify(obj);
+    obj.input = res[0].value;
+    const jsonString= JSON.stringify(obj);
 
     const modelURL = "http://127.0.0.1:5000/linear_regression";
-    var modelXmlHttpReq = new XMLHttpRequest();
-    modelXmlHttpReq.onload = reqListenerModel;
+    const modelXmlHttpReq = new XMLHttpRequest();
+    modelXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(modelXmlHttpReq.responseText);
+      let rainfall = parseFloat(res.result);
+      rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
+      console.log(rainfall);
+      document.getElementById("predictedRainfall").innerHTML = rainfall.toString();
+    })
     modelXmlHttpReq.open("POST", modelURL, true);
     modelXmlHttpReq.send(jsonString);
+  })
+  tempXmlHttpReq.open("GET", tempUrl, true);
+  tempXmlHttpReq.send();
+
+  const humidXmlHttpReq = new XMLHttpRequest();
+  humidXmlHttpReq.addEventListener("load", () => {
+    const res = JSON.parse(humidXmlHttpReq.responseText);
+    document.getElementById("textCurrentHumidValue").innerHTML = res[0].value
+  })
+  humidXmlHttpReq.open("GET", humidUrl, true);
+  humidXmlHttpReq.send();
 }
 
-function loadTempHumid() {
-    var tempHumidXmlHttpReq = new XMLHttpRequest();
-    tempHumidXmlHttpReq.onload = reqListenerTempHumid;
-    tempHumidXmlHttpReq.open("GET", tempHumidUrl, true);
-    tempHumidXmlHttpReq.send();
-}
+const insertRowsToTable = (date_str, avgtemp_str, rainfall_str) => {
+    const table = document.getElementById("tableOfPrediction");
+    let duplicate = false;
 
-function insertRowsToTable(date_str, avgtemp_str, rainfall_str) {
-    var table = document.getElementById("tableOfPrediction");
-    var duplicate = false;
+    for (let i = 1, row; row = table.rows[i]; i++) {
+        const cellContent = row.cells[0].innerHTML;
 
-
-    for (var i = 1, row; row = table.rows[i]; i++) {
-        var cellContent = row.cells[0].innerHTML;
-
-        if (cellContent == date_str) {
+        if (cellContent === date_str) {
             duplicate = true;
         }
     }
 
     if (duplicate == false) {
-        var row = table.insertRow(table.length);
-        var cell0 = row.insertCell(0);
-        var cell1 = row.insertCell(1);
-        var cell2 = row.insertCell(2);
-        
-        var textCell0 = document.createTextNode(date_str);
+        const row = table.insertRow(table.length);
+        const cell0 = row.insertCell(0);
+        const cell1 = row.insertCell(1);
+        const cell2 = row.insertCell(2);
+
+        const textCell0 = document.createTextNode(date_str);
         cell0.appendChild(textCell0);
 
-        var textCell1 = document.createTextNode(avgtemp_str);
+        const textCell1 = document.createTextNode(avgtemp_str);
         cell1.appendChild(textCell1);
 
-        var textCell2 = document.createTextNode(rainfall_str);
+        const textCell2 = document.createTextNode(rainfall_str);
         cell2.appendChild(textCell2);
     }
 }
 
-function reqListenerForecast() {
-    var res = JSON.parse(this.responseText);
+// function reqListenerForecast() {
+//     var res = JSON.parse(this.responseText);
+// 
+//     var predictionsStr_rainfall = res.rainfall;
+//     var predictionsStr_avgtemp = res.avgtemp;
+// 
+//     var yearOfPrediction = res.year;
+// 
+//     var predictedRainfall_arr = predictionsStr_rainfall.split(",");
+//     predictedRainfall_arr.pop();
+// 
+//     var predictedAvgTemp_arr = predictionsStr_avgtemp.split(",");
+//     predictedAvgTemp_arr.pop();
+// 
+//     console.log(predictedRainfall_arr);
+//     console.log(predictedAvgTemp_arr);
+// 
+//     for (var i = 0 ; i < predictedAvgTemp_arr.length ; i++) {
+// 
+//         var rainfall = parseFloat(predictedRainfall_arr[i]);
+//         rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
+// 
+//         var avgtemp = parseFloat(predictedAvgTemp_arr[i]);
+//         avgtemp = Math.round((avgtemp + Number.EPSILON) * 100) / 100;
+// 
+//         insertRowsToTable((i+1%12).toString()+ '/' + yearOfPrediction.toString(), avgtemp.toString(), rainfall.toString());
+//     }
+// }
 
-    var predictionsStr_rainfall = res.rainfall;
-    var predictionsStr_avgtemp = res.avgtemp;
-
-    var yearOfPrediction = res.year;
-
-    var predictedRainfall_arr = predictionsStr_rainfall.split(",");
-    predictedRainfall_arr.pop();
-
-    var predictedAvgTemp_arr = predictionsStr_avgtemp.split(",");
-    predictedAvgTemp_arr.pop();
-
-    console.log(predictedRainfall_arr);
-    console.log(predictedAvgTemp_arr);
-
-    for (var i = 0 ; i < predictedAvgTemp_arr.length ; i++) {
-
-        var rainfall = parseFloat(predictedRainfall_arr[i]);
-        rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
-
-        var avgtemp = parseFloat(predictedAvgTemp_arr[i]);
-        avgtemp = Math.round((avgtemp + Number.EPSILON) * 100) / 100;
-
-        insertRowsToTable((i+1%12).toString()+ '/' + yearOfPrediction.toString(), avgtemp.toString(), rainfall.toString());
-    }
-}
-
-function loadForecast() {
-
+const loadForecast = () => {
     const d = new Date();
 
-    var obj = new Object();
+    const obj = new Object();
     obj.author = "tphiepbk";
     obj.type  = "ARIMA";
     obj.input = d.getFullYear();
-    var jsonString= JSON.stringify(obj);
+    const jsonString= JSON.stringify(obj);
 
     const arimaUrl = "http://127.0.0.1:5000/arima";
-    var modelXmlHttpReq = new XMLHttpRequest();
-    modelXmlHttpReq.onload = reqListenerForecast;
-    modelXmlHttpReq.open("POST", arimaUrl, true);
-    modelXmlHttpReq.send(jsonString);
+
+    const forecastXmlHttpReq = new XMLHttpRequest();
+
+    forecastXmlHttpReq.addEventListener("load", () => {
+      const res = JSON.parse(forecastXmlHttpReq.responseText);
+
+      const predictionsStr_rainfall = res.rainfall;
+      const predictionsStr_avgtemp = res.avgtemp;
+
+      const yearOfPrediction = res.year;
+
+      const predictedRainfall_arr = predictionsStr_rainfall.split(",");
+      predictedRainfall_arr.pop();
+
+      const predictedAvgTemp_arr = predictionsStr_avgtemp.split(",");
+      predictedAvgTemp_arr.pop();
+
+      console.log(predictedRainfall_arr);
+      console.log(predictedAvgTemp_arr);
+
+      for (let i = 0 ; i < predictedAvgTemp_arr.length ; i++) {
+
+          let rainfall = parseFloat(predictedRainfall_arr[i]);
+          rainfall = Math.round((rainfall + Number.EPSILON) * 100) / 100;
+
+          let avgtemp = parseFloat(predictedAvgTemp_arr[i]);
+          avgtemp = Math.round((avgtemp + Number.EPSILON) * 100) / 100;
+
+          insertRowsToTable((i+1%12).toString()+ '/' + yearOfPrediction.toString(), avgtemp.toString(), rainfall.toString());
+      }
+    })
+    forecastXmlHttpReq.open("POST", arimaUrl, true);
+    forecastXmlHttpReq.send(jsonString);
 }
 
-repeat = setInterval(() => {
-    loadTempHumid();
+const repeat = setInterval(() => {
+  loadTempHumid();
 }, intervalTime);

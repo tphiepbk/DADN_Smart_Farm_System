@@ -1,55 +1,33 @@
-var port = 443;
-var host = "io.adafruit.com";
+const port = 443;
+const host = "io.adafruit.com";
 
-// * Final demo
-/*
-var username = "tphiepbk";
-var password = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
-var topic = "tphiepbk/feeds/bk-iot-light-relay";
-*/
+const username_ada = "tphiepbk";
+const password_ada = "aio_Lzjf98yFKjage19nOWPKGJHENd1U";
+const topic = "tphiepbk/feeds/de-smart-farm.de-smart-farm-light-relay";
 
-var username = "CSE_BBC1";
-//var password = "CSE@2021";
-var password    = "aio_GOii70J59sAf8pkCYFQzT9q6SIXk";
-var topic = "CSE_BBC1/feeds/bk-iot-relay";
+const messageOn = "1";
+const messageOff = "0";
 
-var messageOn = JSON.stringify({ "id": "11", "name": "RELAY", "data": "1", "unit": "" });
-var messageOff = JSON.stringify({ "id": "11", "name": "RELAY", "data": "0", "unit": "" });
-
-/*
-var relayUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=" + aio_key;
-var lightUrl = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + aio_key;
-*/
-
-// * Final demo
-/*
-const lightUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + demo_aio_key;
-const relayUrl = "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
-*/
 const lightUrl = get_lightUrl();
 const relayUrl = get_lightRelayUrl();
 
-var checkboxAutomatic = document.querySelector('input[type="checkbox"]');
+const intervalTime = 3000;
+let repeat = null;
 
-checkboxAutomatic.addEventListener('change', manualSwitch);
-
-function manualSwitch() {
-    if (checkboxAutomatic.checked == true) {
-        document.getElementById("manual-switch").style.pointerEvents= "none";
-        document.getElementById("manual-switch").style.opacity= "0.5";
-    }
-    else {
-        document.getElementById("manual-switch").style.pointerEvents= "auto";
-        document.getElementById("manual-switch").style.opacity= "1";
-    }
-}
-
-var repeat = null;
-var intervalTime = 3000;
+const checkboxAutomatic = document.querySelector('input[type="checkbox"]');
+checkboxAutomatic.addEventListener('change', () => {
+  if (checkboxAutomatic.checked == true) {
+    document.getElementById("manual-switch").style.pointerEvents= "none";
+    document.getElementById("manual-switch").style.opacity= "0.5";
+  }
+  else {
+    document.getElementById("manual-switch").style.pointerEvents= "auto";
+    document.getElementById("manual-switch").style.opacity= "1";
+  }
+});
 
 // send a message
-function turnOn() {
-
+const turnOn = () => {
     setTimeout(() => {
         console.log('Turn on');
         document.getElementById("textOn").style.display = "block";
@@ -59,8 +37,7 @@ function turnOn() {
     }, 1000);
 }
 
-function turnOff() {
-
+const turnOff = () => {
     setTimeout(() => {
         console.log('Turn off');
         document.getElementById("textOn").style.display = "none";
@@ -70,63 +47,50 @@ function turnOff() {
     }, 1000);
 }
 
-// called when the client connects
-function onConnect() {
+console.log("Connecting...");
+const client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
+
+client.onConnectionLost = (responseObject) => {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:" + responseObject.errorMessage);
+  }
+};
+
+client.onMessageArrived = (message) => {
+  console.log("onMessageArrived:" + message.payloadString);
+  repeat = setInterval(() => {
+    loader();
+  }, intervalTime);
+};
+
+client.connect({
+  password: password_ada,
+  userName: username_ada,
+  onSuccess: () => {
     client.subscribe(topic);
     console.log("Connect successfully");
     loader();
-    //loadRelay();
-    //loadLight();
-}
-
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-    if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:" + responseObject.errorMessage);
-    }
-}
-
-// called when a message arrives
-function onMessageArrived(message) {
-    console.log("onMessageArrived:" + message.payloadString);
-    
-    repeat = setInterval(() => {
-        loader();
-        //loadRelay();
-        //loadLight();
-    }, intervalTime);
-}
-
-console.log("Connecting...");
-var client = new Paho.MQTT.Client(host, Number(port), "myclientid_" + parseInt(Math.random() * 100, 10));
-
-client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = onMessageArrived;
-
-client.connect({
-    password: password,
-    userName: username,
-    onSuccess: onConnect
+  }
 });
 
 document.getElementById("textOn").style.display = "none";
 document.getElementById("textOff").style.display = "none";
 document.getElementById("textCurrentLightValue").style.display = "none";
 
-function calculateDuration(timestampA, timestampB) {
-    var datetimeA = new Date(timestampA);
-    var datetimeB = new Date(timestampB);
+const calculateDuration = (timestampA, timestampB) => {
+    const datetimeA = new Date(timestampA);
+    const datetimeB = new Date(timestampB);
 
-    var ms = moment.utc(datetimeB).diff(moment.utc(datetimeA));
-    var d = moment.duration(ms);
+    const ms = moment.utc(datetimeB).diff(moment.utc(datetimeA));
+    const d = moment.duration(ms);
 
     return d.asHours();
 }
 
 // * For light chart
-var ctxLight = document.getElementById("light_chart").getContext("2d");
+const ctxLight = document.getElementById("light_chart").getContext("2d");
 
-var light_chart = new Chart(ctxLight, {
+const light_chart = new Chart(ctxLight, {
     data: {
         labels: [],
         datasets: [{
@@ -169,21 +133,21 @@ var light_chart = new Chart(ctxLight, {
     }
 });
 
-var sortedLightByDay = true;
-var sortedLightByMonth = false;
-var sortedLightByYear = false;
+const sortedLightByDay = true;
+const sortedLightByMonth = false;
+const sortedLightByYear = false;
 
-function loadChartData(chartDataLightRelay, labelDataLightRelay) {
-    var labelDataLightRelayDate = [];
-    var numberOfLightOn = [];
-    var numberOfLightOff = [];
+const loadChartData = (chartDataLightRelay, labelDataLightRelay) => {
+    const labelDataLightRelayDate = [];
+    const numberOfLightOn = [];
+    const numberOfLightOff = [];
 
-    var currentNumberLightOn = 0;
-    var currentNumberLightOff = 0;
+    let currentNumberLightOn = 0;
+    let currentNumberLightOff = 0;
 
-    for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
+    for (let i = 0 ; i < labelDataLightRelay.length ; i++) {
 
-        var currentDate = null;
+        let currentDate = null;
         if (sortedLightByDay == true) {
             currentDate = labelDataLightRelay[i].substr(0, 10);
         }
@@ -194,7 +158,7 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
             currentDate = labelDataLightRelay[i].substr(0, 4);
         }
 
-        var currentStateOfSwitch = parseInt(chartDataLightRelay[i]);
+        const currentStateOfSwitch = parseInt(chartDataLightRelay[i]);
 
         if (currentDate != labelDataLightRelayDate[labelDataLightRelayDate.length - 1] && labelDataLightRelayDate.length != 0) {
             numberOfLightOn.push(currentNumberLightOn);
@@ -234,23 +198,23 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
     }
 
     // * Calculate working hours
-    var currentDate_labelDataLightRelay_workingHours = [];
-    var currentDate_chartDataLightRelay_workingHours = [];
+    let currentDate_labelDataLightRelay_workingHours = [];
+    let currentDate_chartDataLightRelay_workingHours = [];
 
-    var labelDataLightRelay_workingHours = [];
-    var chartDataLightRelay_workingHours = [];
+    const labelDataLightRelay_workingHours = [];
+    const chartDataLightRelay_workingHours = [];
 
-    var dateIndex = 0;
+    let dateIndex = 0;
 
-    for (var i = 0 ; i < labelDataLightRelay.length ; i++) {
+    for (let i = 0 ; i < labelDataLightRelay.length ; i++) {
 
         if (currentDate_labelDataLightRelay_workingHours.length == 0) {
             currentDate_chartDataLightRelay_workingHours.push(chartDataLightRelay[i]);
             currentDate_labelDataLightRelay_workingHours.push(labelDataLightRelay[i]);
         }
         else {
-            var currentDate = null;
-            var previousDate = null;
+            let currentDate = null;
+            let previousDate = null;
 
             if (sortedLightByDay == true) {
                 currentDate = labelDataLightRelay[i].substr(0, 10);
@@ -281,12 +245,12 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                     console.log(currentDate_chartDataLightRelay_workingHours);
                     console.log(currentDate_labelDataLightRelay_workingHours);
 
-                    var slow = 0;
-                    var currentDate_totalWorkingHours = 0;
+                    let slow = 0;
+                    let currentDate_totalWorkingHours = 0;
                     while (slow < currentDate_chartDataLightRelay_workingHours.length) {
-                        var found = false;
+                        let found = false;
                         if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
-                            var fast = slow + 1;
+                            let fast = slow + 1;
                             while (fast < currentDate_chartDataLightRelay_workingHours.length) {
                                 if (currentDate_chartDataLightRelay_workingHours[fast] == "0") {
                                     currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], currentDate_labelDataLightRelay_workingHours[fast]);
@@ -300,16 +264,16 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                             }
                             if (found == false) {
                                 if (sortedLightByDay == true) {
-                                    var endOfTheDate = previousDate + "T23:59:59Z";
+                                    const endOfTheDate = previousDate + "T23:59:59Z";
                                 }
                                 else if (sortedLightByMonth == true) {
-                                    var month = previousDate.substr(5, 2);
-                                    var endOfTheDate = previousDate;
+                                    const month = previousDate.substr(5, 2);
+                                    const endOfTheDate = previousDate;
                                     if (month == "04" || month == "06" || month == "09" || month == "11") {
                                         endOfTheDate += "-30T23:59:59Z";
                                     }
                                     else if (month == "02") {
-                                        var year = parseInt(previousDate.substr(0,4));
+                                        const year = parseInt(previousDate.substr(0,4));
                                         if (year % 4 == 0) {
                                             endOfTheDate += "-29T23:59:59Z";
                                         }
@@ -322,11 +286,11 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                                     }
                                 }
                                 else {
-                                    var endOfTheDate = previousDate + "-12-31T23:59:59Z";
+                                    const endOfTheDate = previousDate + "-12-31T23:59:59Z";
                                 }
 
                                 if (dateIndex == 0) {
-                                    var d = new Date();
+                                    const d = new Date();
                                     d = d.toISOString();
 
                                     if (sortedLightByDay == true) {
@@ -366,6 +330,7 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
             }
             else {
                 //* testing
+                let startOfTheDate;
                 console.log("dateIndex " + dateIndex);
 
                 console.log("Original Log : ");
@@ -382,13 +347,13 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
 
                 if (chartDataLightRelay[i] == "1") {
                     if (sortedLightByDay == true) {
-                        var startOfTheDate = previousDate + "T00:00:00Z";
+                        startOfTheDate = previousDate + "T00:00:00Z";
                     }
                     else if (sortedLightByMonth == true) {
-                        var startOfTheDate = previousDate + "-01T00:00:00Z";
+                        startOfTheDate = previousDate + "-01T00:00:00Z";
                     }
                     else {
-                        var startOfTheDate = previousDate + "-01-01T00:00:00Z";
+                        startOfTheDate = previousDate + "-01-01T00:00:00Z";
                     }
                     currentDate_chartDataLightRelay_workingHours.push("1");
                     currentDate_labelDataLightRelay_workingHours.push(startOfTheDate);
@@ -403,12 +368,12 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                 console.log(currentDate_labelDataLightRelay_workingHours);
                 //* end testing
 
-                var slow = 0;
-                var currentDate_totalWorkingHours = 0;
+                let slow = 0;
+                let currentDate_totalWorkingHours = 0;
                 while (slow < currentDate_chartDataLightRelay_workingHours.length) {
-                    var found = false;
+                    let found = false;
                     if (currentDate_chartDataLightRelay_workingHours[slow] == "1") {
-                        var fast = slow + 1;
+                        let fast = slow + 1;
                         while (fast < currentDate_chartDataLightRelay_workingHours.length) {
                             if (currentDate_chartDataLightRelay_workingHours[fast] == "0") {
                                 currentDate_totalWorkingHours += calculateDuration(currentDate_labelDataLightRelay_workingHours[slow], currentDate_labelDataLightRelay_workingHours[fast]);
@@ -421,18 +386,18 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                             }
                         }
                         if (found == false) {
-                            var endOfTheDate = null;
+                            let endOfTheDate = null;
                             if (sortedLightByDay == true) {
                                 endOfTheDate = previousDate + "T23:59:59Z";
                             }
                             else if (sortedLightByMonth == true) {
-                                var month = previousDate.substr(5, 2);
+                                const month = previousDate.substr(5, 2);
                                 endOfTheDate = previousDate;
                                 if (month == "04" || month == "06" || month == "09" || month == "11") {
                                     endOfTheDate += "-30T23:59:59Z";
                                 }
                                 else if (month == "02") {
-                                    var year = parseInt(previousDate.substr(0,4));
+                                    const year = parseInt(previousDate.substr(0,4));
                                     if (year % 4 == 0) {
                                         endOfTheDate += "-29T23:59:59Z";
                                     }
@@ -449,7 +414,7 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
                             }
 
                             if (dateIndex == 0) {
-                                var d = new Date();
+                                let d = new Date();
                                 d = d.toISOString();
 
                                 if (sortedLightByDay == true) {
@@ -512,26 +477,117 @@ function loadChartData(chartDataLightRelay, labelDataLightRelay) {
     light_chart.update(); 
 }
 
-function reqListenerRelay() {
-    var chartDataLightRelay = [];
-    var labelDataLightRelay = [];
+// const reqListenerRelay = () => {
+    // const chartDataLightRelay = [];
+    // const labelDataLightRelay = [];
 
-    var res = JSON.parse(this.responseText);
+    // console.log(this.responseText)
 
-    for (var i = 0 ; i < res.length ; i++) {
-        try {
-            chartDataLightRelay.push(JSON.parse(res[i].value).data);
-        }
-        catch(e) {
+    // const res = JSON.parse(this.responseText);
 
-        }
-        labelDataLightRelay.push(res[i].created_at);
+    // for (const i = 0 ; i < res.length ; i++) {
+        // try {
+            // //chartDataLightRelay.push(JSON.parse(res[i].value).data);
+            // chartDataLightRelay.push(res[i].value);
+        // }
+        // catch(e) {
+
+        // }
+        // labelDataLightRelay.push(res[i].created_at);
+    // }
+
+    // console.log('chart data light relay:', chartDataLightRelay);
+    // console.log('label data light relay:', labelDataLightRelay);
+
+    // const currentStateOfLight = chartDataLightRelay[0];
+    // if (currentStateOfLight == 1) {
+        // document.getElementById("textOn").style.display = "block";
+        // document.getElementById("textOff").style.display = "none";
+    // }
+    // else {
+        // document.getElementById("textOn").style.display = "none";
+        // document.getElementById("textOff").style.display = "block";
+    // }
+// }
+
+// const reqListenerLight = () => {
+    // const chartDataLight = [];
+
+    // const res = JSON.parse(this.responseText);
+
+    // for (const i = 0 ; i < res.length ; i++) {
+        // try {
+            // // chartDataLight.push(JSON.parse(res[i].value).data);
+            // chartDataLight.push(res[i].value);
+        // }
+        // catch(e) {
+
+        // }
+    // }
+
+    // console.log('chart data light:', chartDataLight);
+
+    // const currentLightValue = parseInt(chartDataLight[0]);
+    // const currentLightRelayValue = null;
+
+    // document.getElementById("textCurrentLightValue").style.display = "block";
+    // document.getElementById("textCurrentLightValue").innerHTML = currentLightValue;
+
+    // const currentRelayOn = document.getElementById("textOn").style.display;
+    // const currentRelayOff = document.getElementById("textOff").style.display;
+
+    // if (currentRelayOn === "block" && currentRelayOff === "none") {
+        // currentLightRelayValue = 1;
+    // }
+    // else {
+        // currentLightRelayValue = 0;
+    // }
+
+    // if (checkboxAutomatic.checked == true) {
+        // if (currentLightValue >= 100 && currentLightRelayValue == 1) {
+            // highLightAlertTrigger();
+            // turnOff();
+        // }
+        // else if (currentLightValue < 100 && currentLightRelayValue == 0) {
+            // lowLightAlertTrigger();
+            // turnOn();
+        // }
+    // }
+    // else {
+        // if (currentLightValue >= 100 && currentLightRelayValue == 1) {
+            // highLightAlertTrigger();
+        // }
+        // else if (currentLightValue < 100 && currentLightRelayValue == 0) {
+            // lowLightAlertTrigger();
+        // }
+    // }
+// }
+
+const loadRelay = () => {
+  const lightRelayXmlHttpReq = new XMLHttpRequest();
+  lightRelayXmlHttpReq.open("GET", relayUrl, true);
+  lightRelayXmlHttpReq.addEventListener("load", () => {
+    const chartDataLightRelay = [];
+    const labelDataLightRelay = [];
+
+    const res = JSON.parse(lightRelayXmlHttpReq.responseText);
+
+    console.log(res);
+
+    for (let i = 0 ; i < res.length ; i++) {
+      try {
+        chartDataLightRelay.push(res[i].value);
+      }
+      catch(e) {
+        console.log(e)
+      }
+      labelDataLightRelay.push(res[i].created_at);
     }
 
     console.log('chart data light relay:', chartDataLightRelay);
     console.log('label data light relay:', labelDataLightRelay);
 
-    var currentStateOfLight = chartDataLightRelay[0];
+    const currentStateOfLight = chartDataLightRelay[0];
     if (currentStateOfLight == 1) {
         document.getElementById("textOn").style.display = "block";
         document.getElementById("textOff").style.display = "none";
@@ -540,82 +596,75 @@ function reqListenerRelay() {
         document.getElementById("textOn").style.display = "none";
         document.getElementById("textOff").style.display = "block";
     }
+  });
+  lightRelayXmlHttpReq.send(null);
 }
 
-function reqListenerLight() {
-    var chartDataLight = [];
-
-    var res = JSON.parse(this.responseText);
-
-    for (var i = 0 ; i < res.length ; i++) {
-        try {
-            chartDataLight.push(JSON.parse(res[i].value).data);
-        }
-        catch(e) {
-
-        }
-    }
-
-    console.log('chart data light:', chartDataLight);
-
-    var currentLightValue = parseInt(chartDataLight[0]);
-    var currentLightRelayValue = null;
-
-    document.getElementById("textCurrentLightValue").style.display = "block";
-    document.getElementById("textCurrentLightValue").innerHTML = currentLightValue;
-
-    var currentRelayOn = document.getElementById("textOn").style.display;
-    var currentRelayOff = document.getElementById("textOff").style.display;
-
-    if (currentRelayOn === "block" && currentRelayOff === "none") {
-        currentLightRelayValue = 1;
-    }
-    else {
-        currentLightRelayValue = 0;
-    }
-
-    if (checkboxAutomatic.checked == true) {
-        if (currentLightValue >= 100 && currentLightRelayValue == 1) {
-            highLightAlertTrigger();
-            turnOff();
-        }
-        else if (currentLightValue < 100 && currentLightRelayValue == 0) {
-            lowLightAlertTrigger();
-            turnOn();
-        }
-    }
-    else {
-        if (currentLightValue >= 100 && currentLightRelayValue == 1) {
-            highLightAlertTrigger();
-        }
-        else if (currentLightValue < 100 && currentLightRelayValue == 0) {
-            lowLightAlertTrigger();
-        }
-    }
-}
-
-function loadRelay() {
-    var lightRelayXmlHttpReq = new XMLHttpRequest();
-    lightRelayXmlHttpReq.onload = reqListenerRelay;
-    lightRelayXmlHttpReq.open("GET", relayUrl, true);
-    lightRelayXmlHttpReq.send();
-}
-
-function loadLight() {
-    var lightXmlHttpReq = new XMLHttpRequest();
-    lightXmlHttpReq.onload = reqListenerLight;
+const loadLight = () => {
+    const lightXmlHttpReq = new XMLHttpRequest();
     lightXmlHttpReq.open("GET", lightUrl, true);
-    lightXmlHttpReq.send();
+    lightXmlHttpReq.addEventListener("load", () => {
+      const chartDataLight = [];
+
+      const res = JSON.parse(lightXmlHttpReq.responseText);
+
+      for (let i = 0 ; i < res.length ; i++) {
+          try {
+              chartDataLight.push(res[i].value);
+          }
+          catch(e) {
+            console.log(e);
+          }
+      }
+
+      console.log('chart data light:', chartDataLight);
+
+      const currentLightValue = parseInt(chartDataLight[0]);
+      let currentLightRelayValue = null;
+
+      document.getElementById("textCurrentLightValue").style.display = "block";
+      document.getElementById("textCurrentLightValue").innerHTML = currentLightValue;
+
+      const currentRelayOn = document.getElementById("textOn").style.display;
+      const currentRelayOff = document.getElementById("textOff").style.display;
+
+      if (currentRelayOn === "block" && currentRelayOff === "none") {
+          currentLightRelayValue = 1;
+      }
+      else {
+          currentLightRelayValue = 0;
+      }
+
+      if (checkboxAutomatic.checked == true) {
+          if (currentLightValue >= 100 && currentLightRelayValue == 1) {
+              highLightAlertTrigger();
+              turnOff();
+          }
+          else if (currentLightValue < 100 && currentLightRelayValue == 0) {
+              lowLightAlertTrigger();
+              turnOn();
+          }
+      }
+      else {
+          if (currentLightValue >= 100 && currentLightRelayValue == 1) {
+              highLightAlertTrigger();
+          }
+          else if (currentLightValue < 100 && currentLightRelayValue == 0) {
+              lowLightAlertTrigger();
+          }
+      }
+    })
+    lightXmlHttpReq.send(null);
 }
 
-function loader() {
+const loader = () => {
     loadRelay();
     setTimeout(() => {
         loadLight();
     }, 1000);
 }
 
-function sortStyle(typeOfSort) {
+const sortStyle = (typeOfSort) => {
     if (typeOfSort == "day") {
         sortedLightByDay = true;
         sortedLightByMonth = false;
@@ -637,7 +686,7 @@ const socket = io('http://localhost:3000/', {
     reconnectionDelayMax: 7000
 });
 
-socket.on("send_data", function (element1, element2, element3, element4, element5, element6, element7, element8) {
+socket.on("send_data", (element1, element2, element3, element4, element5, element6, element7, element8) => {
     /*
     console.log("Received : ");
     console.log(element1);

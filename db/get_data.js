@@ -1,109 +1,217 @@
-const fetch = require("node-fetch");
+const mongoose = require("mongoose");
+const {MongoClient} = require("mongodb");
+const https = require("https");
 const assert = require("assert");
 
-const MongoClient = require("mongodb").MongoClient;
-
 // Connection string
-//const connectionString = "mongodb+srv://tphiepbk:hiepit-2992@cluster0.axbkf.mongodb.net/bk-iot-test?retryWrites=true&w=majority";
-const connectionString = "mongodb+srv://fwbteam:fwbteam@cluster0.in5dd.mongodb.net/bk-iot?retryWrites=true&w=majority";
+const CONNECTION_STRING = "mongodb+srv://tphiepbk:tph-2992@cluster0.bjhqp.mongodb.net/de-smart-farm?retryWrites=true&w=majority";
 
-const CSE_BBC = "aio_eIzx84QrfGct3jkJM5aW02aKAIbB";
-const CSE_BBC1 = "aio_GOii70J59sAf8pkCYFQzT9q6SIXk";
-const my_aio_key = "aio_iisO75vFLbGHWVtPofj308dOsBqf";
+const my_aio_key = "aio_Lzjf98yFKjage19nOWPKGJHENd1U";
 
-/*
-// ADA Fruit devices
-const light_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light-relay/data.json?X-AIO-Key=" + global_aio_key;
-const light_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-light/data.json?X-AIO-Key=" + global_aio_key;
-const soil_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-soil/data.json?X-AIO-Key=" + global_aio_key;
-const water_pump_relay_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + global_aio_key;
-const temp_humid_url = "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + global_aio_key;
-*/
+const soil_humidity_sensor_key = "de-smart-farm.de-smart-farm-soil-humidity-sensor"
+const light_sensor_key = "de-smart-farm.de-smart-farm-light-sensor"
+const water_pump_relay_key = "de-smart-farm.de-smart-farm-water-pump-relay"
+const light_relay_key = "de-smart-farm.de-smart-farm-light-relay"
+const air_humidity_sensor_key = "de-smart-farm.de-smart-farm-air-humidity-sensor"
+const temperature_sensor_key = "de-smart-farm.de-smart-farm-temperature-sensor"
 
-// * For the final demo
-const light_relay_url =         "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + CSE_BBC1;
+// ADAFruits devices
+const light_relay_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${light_relay_key}/data.json?X-AIO-Key=${my_aio_key}`;
+const water_pump_relay_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${water_pump_relay_key}/data.json?X-AIO-Key=${my_aio_key}`;
+const light_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${light_sensor_key}/data.json?X-AIO-Key=${my_aio_key}`;
+const soil_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${soil_humidity_sensor_key}/data.json?X-AIO-Key=${my_aio_key}`;
+const temperature_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${temperature_sensor_key}/data.json?X-AIO-Key=${my_aio_key}`;
+const air_humidity_url = `https://io.adafruit.com/api/v2/tphiepbk/feeds/${air_humidity_sensor_key}/data.json?X-AIO-Key=${my_aio_key}`;
 
-//const water_pump_relay_url =    "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-relay/data.json?X-AIO-Key=" + demo_aio_key;
-const water_pump_relay_url =    "https://io.adafruit.com/api/v2/tphiepbk/feeds/bk-iot-water-pump-relay/data.json?X-AIO-Key=" + my_aio_key;
+// mongoose.set('autoIndex', false);
 
-const light_url =               "https://io.adafruit.com/api/v2/CSE_BBC1/feeds/bk-iot-light/data.json?X-AIO-Key=" + CSE_BBC1;
+// const startConnection = async () => {
+//   const connectionPromise = new Promise((resolve, _reject) => {
+//     mongoose.connect(CONNECTION_STRING, {autoIndex: false}, (error) => {
+//       if (error) {
+//         console.log(`error = ${error}`)
+//         resolve("FAILED");
+//       }
+//       else resolve("SUCCESS");
+//     });
+//   });
+//   const result = await connectionPromise;
+//   return result;
+// };
+// 
+// const closeConnection = async () => {
+//   const result = await mongoose.disconnect();
+//   return result;
+// };
+// 
+// const lightSensorSchema = new mongoose.Schema({
+//   id: String,
+//   value: String,
+//   feed_id: Number,
+//   feed_key: String,
+//   created_at: String,
+//   created_epoch: Number,
+//   expiration: String
+// }, {collection: "light-sensor"});
+// 
+// const lightSensorModel = mongoose.model('light-sensor', lightSensorSchema)
+// 
+// const soilHumiditySensorSchema = new mongoose.Schema({
+//   id: String,
+//   value: String,
+//   feed_id: Number,feed_key: String,
+//   created_at: String,
+//   created_epoch: Number,
+//   expiration: String
+// }, {collection: "soil-humidity-sensor"});
+// 
+// const soilHumiditySensorModel = mongoose.model('soil-humidity-sensor', soilHumiditySensorSchema)
+// 
+// const lightRelaySchema = new mongoose.Schema({
+//   id: String,
+//   value: String,
+//   feed_id: Number,feed_key: String,
+//   created_at: String,
+//   created_epoch: Number,
+//   expiration: String
+// }, {collection: "light-relay"});
+// 
+// const lightRelayModel = mongoose.model('light-relay', lightRelaySchema)
+// 
+// const waterPumpRelaySchema = new mongoose.Schema({
+//   id: String,
+//   value: String,
+//   feed_id: Number,feed_key: String,
+//   created_at: String,
+//   created_epoch: Number,
+//   expiration: String
+// }, {collection: "water-pump-relay"});
+// 
+// const waterPumpRelayModel = mongoose.model('water-pump-relay', waterPumpRelaySchema)
+// 
+// const saveDeviceData = async (typeOfDevice, feedData, myResolve) => {
+//   let returnValue;
+//   let deviceModel;
+// 
+//   const connectionResult = await startConnection();
+// 
+//   if (connectionResult === "FAILED") {
+//     returnValue = "CANNOT CONNECT";
+//   } else {
+//     if (typeOfDevice === "light-sensor") {
+//       deviceModel = lightSensorModel
+//     } else if (typeOfDevice === "soil-humidity-sensor") {
+//       deviceModel = soilHumiditySensorModel
+//     } else if (typeOfDevice === "light-relay") {
+//       deviceModel = lightRelayModel
+//     } else {
+//       deviceModel = waterPumpRelayModel
+//     }
+// 
+//     const saveDeviceDataPromise = new Promise((resolve, reject) => {
+//       deviceModel.insertMany(feedData.map(element => ({...element})), {ordered: false}, (error) => {
+//         if (error) {
+//           console.log(`Save error: ${error}`)
+//           resolve("FAILED TO INSERT")
+//         } else {
+//           console.log("insert many success");
+//           resolve("SUCCESS")
+//         }
+//       })
+//     });
+// 
+//     returnValue = await saveDeviceDataPromise;
+// 
+//     await closeConnection();
+//   }
+// 
+//   myResolve(returnValue);
+// };
 
-const soil_url =                "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-soil/data.json?X-AIO-Key=" + CSE_BBC;
-const temp_humid_url =          "https://io.adafruit.com/api/v2/CSE_BBC/feeds/bk-iot-temp-humid/data.json?X-AIO-Key=" + CSE_BBC;
+const mongoClient = new MongoClient(CONNECTION_STRING);
 
-function upload(collectionName, data) {
-    MongoClient.connect(connectionString, function(err, client) {
+const saveDeviceData = async (typeOfDevice, feedData, resolve) => {
+  try {
+    await mongoClient.connect();
+    const database = mongoClient.db("de-smart-farm");
+    const collection = database.collection(typeOfDevice);
+    collection.createIndex({"id": 1}, {unique: true});
+    const options = { ordered: true, upsert: true };
+    const result = await collection.insertMany(feedData, options);
+    console.log(`${result.insertedCount} documents were inserted`);
+  } catch(e) {
+    console.log(`================================== ${typeOfDevice} ==========================================`);
+    console.log(e);
+    console.log(`================================== ${typeOfDevice} ==========================================`);
+    resolve("FAILED");
+  } finally {
+    await mongoClient.close();
+    resolve("SUCCESS");
+  }
+}
 
-        if (err) throw err;
-        assert.equal(null, err);
+const getDataFromDevicesAndUpload = async (typeOfDevice, url, resolve) => {
+  https.get(url, (res) => {
+    let body = "";
 
-        const db = client.db('bk-iot');
-
-        // Use index to prevent duplicate
-        db.collection(collectionName).createIndex({"id":1}, {unique: true});
-
-        db.collection(collectionName).insert(data)
-        .then(function(result) {
-            //console.log(result);
-        })
-        .catch((err) => {
-            //console.log(err.message);
-        });
-        client.close();
+    res.on("data", (chunk) => {
+      body += chunk;
     });
+
+    res.on("end", () => {
+        try {
+            let responseAsJson = JSON.parse(body);
+            // do something with JSON
+            let feedData = [];
+            for (var i = 0 ; i < responseAsJson.length ; i++) {
+              feedData.push(responseAsJson[i]);
+            }
+            saveDeviceData(typeOfDevice, feedData, resolve)
+        } catch (error) {
+            console.error(error.message);
+        };
+    });
+
+  }).on("error", (error) => {
+      console.error(error.message);
+  });
+
 };
 
-function getData(collectionName,url) {
-    /*
-    fetch(url)
-    .then(data=>{return data.json()})
-    .then(res=>{
-        feedData = [];
-        //console.log(res.length);
-        for (var i = 0 ; i < res.length ; i++) {
-            feedData.push(res[i]);
-        }
-        //console.log(feedData);
-        upload(collectionName, feedData);
-    })
-    */
-    fetch(url)
-    .then(function(response) {
-        if (!response.ok) {
-            throw Error(response.statusText);
-        }
-        // Read the response as json.
-        return response.json();
-    })
-    .then(function(responseAsJson) {
-        // Do stuff with the JSON
-        feedData = [];
-        for (var i = 0 ; i < responseAsJson.length ; i++) {
-            feedData.push(responseAsJson[i]);
-        }
-        upload(collectionName, feedData);
-    })
-    .catch(function(error) {
-        console.log('Looks like there was a problem: \n', error);
-    });        
-};
+const fullLoader = async (onFinish) => {
+  console.log("Uploading data from url to MongoDB...");
+
+  const getLightSensorDataPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("light-sensor", light_url, resolve);
+  })
+  const getSoilHumiditySensorPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("soil-humidity-sensor", soil_url, resolve);
+  })
+  const getLightRelayPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("light-relay", light_relay_url, resolve);
+  })
+  const getWaterPumpRelayPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("water-pump-relay", water_pump_relay_url, resolve);
+  })
+  const getTemperatureSensorDataPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("temperature-sensor", temperature_url, resolve);
+  })
+  const getAirHumiditySensorDataPromise = new Promise((resolve, reject) => {
+    getDataFromDevicesAndUpload("air-humidity-sensor", air_humidity_url, resolve);
+  })
+
+  Promise.all([getLightSensorDataPromise,
+    getSoilHumiditySensorPromise,
+    getLightRelayPromise,
+    getWaterPumpRelayPromise,
+    getTemperatureSensorDataPromise,
+    getAirHumiditySensorDataPromise
+  ]).then((values) => {
+    console.log(`Completed uploading data to MongoDB: ${values}`)
+    onFinish();
+  })
+}
 
 module.exports = {
-    fullLoader : function() {
-        console.log("Loading data from url to MongoDB...");
-        getData('bk-iot-light', light_url);
-        getData('bk-iot-soil', soil_url);
-        getData('bk-iot-light-relay', light_relay_url);
-        getData('bk-iot-water-pump-relay', water_pump_relay_url);
-        getData('bk-iot-temp-humid', temp_humid_url);
-    }
+  fullLoader
 };
-
-/*
-setInterval(function(){
-    getData('bk-iot-light', light_url);
-    getData('bk-iot-soil', soil_url);
-    getData('bk-iot-light-relay', light_relay_url);
-    getData('bk-iot-water-pump-relay', water_pump_relay_url);
-}, 1000);
-*/
