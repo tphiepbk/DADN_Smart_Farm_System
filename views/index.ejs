@@ -36,21 +36,9 @@
 
                         <div class="card-deck">
 
-                            <div class="card bg-dark text-white">
-                                <div class="card-header"><strong>Date and Time</strong></div>
-
-                                <div class="card-body">
-                                    <div id="clock-container">
-                                        <p id="time"></p>
-                                        <p id="date"></p>
-                                    </div>
-                                </div>
-
-                            </div>
-
                             <div class="card bg-warning text-white">
                                 <div class="card-body">
-                                    <div id="text-current-light-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div id="text-current-light-sensor-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
                                     <div>Light</div>
                                     <img src="barchart.png" alt="barchart" style="height: 5rem; width: 100%;">
                                 </div>
@@ -58,15 +46,15 @@
 
                             <div class="card bg-info text-white">
                                 <div class="card-body">
-                                    <div id="text-current-soil-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
-                                    <div>Soil</div>
+                                    <div id="text-current-soil-humidity-sensor-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div>Soil Humidity</div>
                                     <img src="linegraph.png" alt="linegraph" style="height: 5rem; width: 100%;">
                                 </div>
                             </div>
 
                             <div class="card bg-danger text-white">
                                 <div class="card-body">
-                                    <div id="text-current-temp-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div id="text-current-temperature-sensor-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
                                     <div>Temperature</div>
                                     <img src="areachart.png" alt="areachart" style="height: 5rem; width: 100%;">
                                 </div>
@@ -74,8 +62,8 @@
 
                             <div class="card bg-primary text-white">
                                 <div class="card-body">
-                                    <div id="text-current-humid-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
-                                    <div>Humidity</div>
+                                    <div id="text-current-air-humidity-sensor-value" style="font-size: 2rem; font-weight: 700;">Getting...</div>
+                                    <div>Air Humidity</div>
                                     <img src="curvedlinegraph.png" alt="curvedlinegraph" style="height: 5rem; width: 100%;">
                                 </div>
                             </div>
@@ -84,34 +72,80 @@
 
                         <hr>
 
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card-deck">
 
-                                <button type="button" onclick="sortStyle('light', 'day')" class="btn btn-twitter"><span class="cil-calendar btn-icon mr-2"></span> Day</button>
-                                <button type="button" onclick="sortStyle('light', 'month')" class="btn btn-vimeo"><span class="cil-calendar btn-icon mr-2"></span> Month</button>
-                                <button type="button" onclick="sortStyle('light', 'year')" class="btn btn-xing"><span class="cil-calendar btn-icon mr-2"></span> Year</button>
+                          <div class="card">
+                              <div class="card-body">
 
-                                <canvas id="light_chart"></canvas>
+                                  <table class="table table-borderless table-striped" id="tableOfLightSensorDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
 
-                                <hr>
-                                <p class="card-text"><strong>State of light</strong></p>
+                              </div>
+                          </div>
 
-                            </div>
-                        </div>
+                          <div class="card">
+                              <div class="card-body">
 
-                        <div class="card">
-                            <div class="card-body">
+                                  <table class="table table-borderless table-striped" id="tableOfSoilHumiditySensorDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
 
-                                <button type="button" onclick="sortStyle('soil', 'day')" class="btn btn-twitter"><span class="cil-calendar btn-icon mr-2"></span> Day</button>
-                                <button type="button" onclick="sortStyle('soil', 'month')" class="btn btn-vimeo"><span class="cil-calendar btn-icon mr-2"></span> Month</button>
-                                <button type="button" onclick="sortStyle('soil', 'year')" class="btn btn-xing"><span class="cil-calendar btn-icon mr-2"></span> Year</button>
+                              </div>
+                          </div>
 
-                                <canvas id="soil_chart"></canvas>
+                          <div class="card">
+                              <div class="card-body">
 
-                                <hr>
-                                <p class="card-text"><strong>State of soil</strong></p>
+                                  <table class="table table-borderless table-striped" id="tableOfTemperatureSensorDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
 
-                            </div>
+                              </div>
+                          </div>
+
+                          <div class="card">
+                              <div class="card-body">
+
+                                  <table class="table table-borderless table-striped" id="tableOfAirHumiditySensorDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
+
+                              </div>
+                          </div>
+
                         </div>
 
                     </div>

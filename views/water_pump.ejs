@@ -53,6 +53,13 @@
                                                 <strong id="textCurrentSoilValue" class="h4">22,643</strong>
                                             </div>
                                         </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="c-callout c-callout-danger b-t-1 b-r-1 b-b-1">
+                                                <small class="text-muted">Soil sensor (Aggregated)</small><br>
+                                                <strong id="textCurrentSoilValue_aggregated" class="h4">22,643</strong>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -96,19 +103,50 @@
                     <br>
 
                     <div class="container-fluid">
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card-deck">
 
-                                <button type="button" onclick="sortStyle('day')" class="btn btn-twitter"><span class="cil-calendar btn-icon mr-2"></span> Day</button>
-                                <button type="button" onclick="sortStyle('month')" class="btn btn-vimeo"><span class="cil-calendar btn-icon mr-2"></span> Month</button>
-                                <button type="button" onclick="sortStyle('year')" class="btn btn-xing"><span class="cil-calendar btn-icon mr-2"></span> Year</button>
+                          <div class="card">
 
-                                <div class="chart-container">
-                                    <canvas id="water_pump_chart" height = "10rem" width = "20rem"></canvas>
-                                </div>
-                                <hr>
-                                <p class="card-text"><strong>State of water pump system</strong></p>
-                            </div>
+                              <div class="card-header"><strong>Soil humidity sensor data</strong></div>
+
+                              <div class="card-body">
+
+                                  <table class="table table-borderless table-striped" id="tableOfSoilHumiditySensorDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
+
+                              </div>
+                          </div>
+
+                          <div class="card">
+
+                              <div class="card-header"><strong>Water pump relay data</strong></div>
+
+                              <div class="card-body">
+
+                                  <table class="table table-borderless table-striped" id="tableOfWaterPumpRelayDeviceData">
+                                      <thead class="thead-dark">
+                                          <tr>
+                                          <th scope="col">Time</th>
+                                          <th scope="col">Device ID</th>
+                                          <th scope="col">Value</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      </tbody>
+                                  </table>
+
+                              </div>
+                          </div>
+
                         </div>
                     </div>
                 </main>
